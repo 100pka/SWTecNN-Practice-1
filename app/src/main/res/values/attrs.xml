@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="MyCustomView">
+        <attr name="count_text_size" format="dimension" />
+        <attr name="count_text_color" format="reference|color" />
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">swtec_practice</string>
+    <string name="date_07_02_2020">February 7, 2020</string>
+    <string name="temp">Temp</string>
+    <string name="humidity">Humidity</string>
+    <string name="percent_73">73%</string>
+    <string name="celcium_27">27°</string>
+</resources>

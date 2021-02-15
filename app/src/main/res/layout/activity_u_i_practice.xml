@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.UIPracticeActivity"
+    android:background="@color/blue_main_background">
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/start_margin_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/margin_12" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/end_margin_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/margin_12" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/whether_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.25" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/locations_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_percent="0.65" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/whether_rv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/margin_24"
+        android:layout_marginEnd="@dimen/margin_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/start_margin_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/whether_guideline"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/whether_item"
+        tools:itemCount="3"
+        android:overScrollMode="never"/>
+
+    <CheckBox
+        android:id="@+id/sprinkler_check_box"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:button="@null"
+        app:layout_constraintEnd_toStartOf="@+id/locations_guideline"
+        app:layout_constraintStart_toEndOf="@id/whether_guideline"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:contentDescription="Water sprinkler reset"
+        android:id="@+id/sprinkler_icon"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_24"
+        app:layout_constraintEnd_toStartOf="@+id/locations_guideline"
+        app:layout_constraintStart_toEndOf="@id/whether_guideline"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@+id/temperature_label"
+        android:src="@drawable/sprinkler_icon_off"
+        android:clickable="true"
+        android:scaleType="fitCenter"
+        />
+
+    <TextView
+        android:id="@+id/temperature_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/sprinkler_icon"
+        app:layout_constraintStart_toStartOf="@+id/sprinkler_icon"
+        app:layout_constraintBottom_toTopOf="@+id/temperature"
+        android:text="@string/temp"
+        android:textSize="@dimen/default_text_size"
+        />
+
+    <TextView
+        android:id="@+id/humidity_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/sprinkler_icon"
+        app:layout_constraintEnd_toEndOf="@+id/sprinkler_icon"
+        app:layout_constraintBottom_toTopOf="@+id/humidity"
+        android:text="@string/humidity"
+        android:textSize="@dimen/default_text_size"
+        />
+
+    <TextView
+        android:id="@+id/temperature"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/temperature_label"
+        app:layout_constraintStart_toStartOf="@+id/temperature_label"
+        app:layout_constraintBottom_toTopOf="@+id/my_custom_view"
+        android:text="@string/celcium_27"
+        android:textSize="@dimen/big_text_size"
+        />
+
+    <TextView
+        android:id="@+id/humidity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/humidity_label"
+        app:layout_constraintStart_toStartOf="@+id/humidity_label"
+        app:layout_constraintBottom_toTopOf="@+id/my_custom_view"
+        android:text="@string/percent_73"
+        android:textSize="@dimen/big_text_size"
+        />
+
+
+    <com.stopkaaaa.swtec_practice.ui.MyCustomView
+        android:id="@+id/my_custom_view"
+        android:layout_width="@dimen/water_icon_size"
+        android:layout_height="@dimen/water_icon_size"
+        app:layout_constraintTop_toBottomOf="@+id/temperature"
+        app:layout_constraintStart_toStartOf="@+id/sprinkler_icon"
+        app:layout_constraintEnd_toEndOf="@+id/sprinkler_icon"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:count_text_color="@color/white"
+        app:count_text_size="@dimen/small_text_size"
+        tools:text="1"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/location_rv"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="@dimen/margin_24"
+        android:layout_marginStart="@dimen/margin_24"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/locations_guideline"
+        app:layout_constraintEnd_toEndOf="@+id/end_margin_guideline"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        tools:listitem="@layout/location_item"
+        android:overScrollMode="never"/>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>
