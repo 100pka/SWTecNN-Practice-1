@@ -5,4 +5,7 @@
     <string name="humidity">Humidity</string>
     <string name="percent_73">73%</string>
     <string name="celcium_27">27°</string>
+    <string name="sprinkle_for_tomorrow">Sprinkle for tomorrow</string>
+    <string name="sprinkling_now">Sprinkling now</string>
+    <string name="water_sprinkler_reset">Water sprinkler reset</string>
 </resources>

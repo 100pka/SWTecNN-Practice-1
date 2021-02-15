@@ -6,7 +6,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <CheckBox
-        android:contentDescription="Sprinkle for tomorrow"
+        android:contentDescription="@string/sprinkle_for_tomorrow"
         android:id="@+id/set_sprinkle_check_box"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -27,7 +27,7 @@
         app:layout_constraintStart_toEndOf="@+id/set_sprinkle_check_box"
         />
     <CheckBox
-        android:contentDescription="Sprinkling now"
+        android:contentDescription="@string/sprinkling_now"
         android:id="@+id/current_sprinkle_check_box"
         android:layout_width="@dimen/check_box_size"
         android:layout_height="@dimen/check_box_size"

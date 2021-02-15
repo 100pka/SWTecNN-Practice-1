@@ -1,5 +1,6 @@
 package com.stopkaaaa.swtec_practice.ui
 
+import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -18,6 +19,7 @@ class UIPracticeActivity : AppCompatActivity() {
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
 
+    @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUIPracticeBinding.inflate(layoutInflater)
