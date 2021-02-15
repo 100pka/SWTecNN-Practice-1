@@ -35,6 +35,13 @@
         android:orientation="vertical"
         app:layout_constraintGuide_percent="0.65" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent="0.50" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/whether_rv"
         android:layout_width="wrap_content"
@@ -67,7 +74,7 @@
         app:layout_constraintEnd_toStartOf="@+id/locations_guideline"
         app:layout_constraintStart_toEndOf="@id/whether_guideline"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/temperature_label"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline"
         android:src="@drawable/sprinkler_icon_off"
         android:clickable="true"
         android:scaleType="fitCenter"
@@ -77,9 +84,8 @@
         android:id="@+id/temperature_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/sprinkler_icon"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_guideline"
         app:layout_constraintStart_toStartOf="@+id/sprinkler_icon"
-        app:layout_constraintBottom_toTopOf="@+id/temperature"
         android:text="@string/temp"
         android:textSize="@dimen/default_text_size"
         />
@@ -88,9 +94,8 @@
         android:id="@+id/humidity_label"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@+id/sprinkler_icon"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_guideline"
         app:layout_constraintEnd_toEndOf="@+id/sprinkler_icon"
-        app:layout_constraintBottom_toTopOf="@+id/humidity"
         android:text="@string/humidity"
         android:textSize="@dimen/default_text_size"
         />
@@ -101,7 +106,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/temperature_label"
         app:layout_constraintStart_toStartOf="@+id/temperature_label"
-        app:layout_constraintBottom_toTopOf="@+id/my_custom_view"
         android:text="@string/celcium_27"
         android:textSize="@dimen/big_text_size"
         />
@@ -112,7 +116,6 @@
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/humidity_label"
         app:layout_constraintStart_toStartOf="@+id/humidity_label"
-        app:layout_constraintBottom_toTopOf="@+id/my_custom_view"
         android:text="@string/percent_73"
         android:textSize="@dimen/big_text_size"
         />
@@ -125,7 +128,6 @@
         app:layout_constraintTop_toBottomOf="@+id/temperature"
         app:layout_constraintStart_toStartOf="@+id/sprinkler_icon"
         app:layout_constraintEnd_toEndOf="@+id/sprinkler_icon"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:count_text_color="@color/white"
         app:count_text_size="@dimen/small_text_size"
         tools:text="1"/>

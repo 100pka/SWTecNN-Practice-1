@@ -1,6 +1,7 @@
 package com.stopkaaaa.swtec_practice.ui
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -24,6 +25,11 @@ class UIPracticeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUIPracticeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_LANDSCAPE -> binding.horizontalGuideline.setGuidelinePercent(0.50f)
+            else -> binding.horizontalGuideline.setGuidelinePercent(0.33f)
+        }
 
         setupWhetherRecycler()
         setupLocationRecycler()
