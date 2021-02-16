@@ -3,6 +3,9 @@ package com.stopkaaaa.swtec_practice.ui
 import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
+import android.os.Handler
+import android.os.HandlerThread
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -30,13 +33,8 @@ class UIPracticeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityUIPracticeBinding
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
-    private val threadPool = ThreadPoolExecutor(
-        NUMBER_OF_CORES * 2,
-        NUMBER_OF_CORES * 2,
-        60L,
-        TimeUnit.SECONDS,
-        LinkedBlockingQueue<Runnable>(),
-    );
+    private val handlerThread = HandlerThread("backGround thread")
+    private val uiHandler = Handler(Looper.getMainLooper())
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,19 +66,19 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
-        threadPool.run {
+        handlerThread.run {
             RetrofitClient.getCurrentWeather().enqueue(object : Callback<CurrentWeatherForecast> {
                 override fun onResponse(
                     call: Call<CurrentWeatherForecast>,
                     response: Response<CurrentWeatherForecast>
                 ) {
-                    this@UIPracticeActivity.runOnUiThread {
+                    uiHandler.post {
                         response.body()?.let { setCurrentWeather(it) }
                     }
                 }
 
                 override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
-                    this@UIPracticeActivity.runOnUiThread {
+                    uiHandler.post {
                         showMessageToast("Something went wrong: " + t.message)
                     }
                 }
@@ -91,13 +89,13 @@ class UIPracticeActivity : AppCompatActivity() {
                     call: Call<WeatherForecast>,
                     response: Response<WeatherForecast>
                 ) {
-                    this@UIPracticeActivity.runOnUiThread {
+                    uiHandler.post {
                         response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
                     }
                 }
 
                 override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
-                    this@UIPracticeActivity.runOnUiThread {
+                    uiHandler.post {
                         showMessageToast("Something went wrong: " + t.message)
                     }
                 }
