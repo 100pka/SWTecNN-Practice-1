@@ -25,7 +25,7 @@ interface RetrofitService {
         ).joinToString(separator = ","),
         @Query("units") units: String = "metric",
         @Query("appId") apiKey: String = API_KEY
-    ): Single<WeatherForecast>
+    ): Call<WeatherForecast>
 
     @GET("data/2.5/weather")
     fun getCurrentWeatherForecast(
@@ -34,7 +34,7 @@ interface RetrofitService {
         ).joinToString(separator = ","),
         @Query("appId") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
-    ): Single<CurrentWeatherForecast>
+    ):  Call<CurrentWeatherForecast>
 
     @GET
     fun getWeatherImage(@Url imageUrl: String): Call<ResponseBody>
