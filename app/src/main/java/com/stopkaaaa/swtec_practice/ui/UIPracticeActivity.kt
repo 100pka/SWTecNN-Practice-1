@@ -2,12 +2,10 @@ package com.stopkaaaa.swtec_practice.ui
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
@@ -21,13 +19,24 @@ import smart.sprinkler.app.api.RetrofitClient
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
 import smart.sprinkler.app.api.model.WeatherForecast
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ThreadPoolExecutor
+import java.util.concurrent.TimeUnit
+
+val NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors()
 
 class UIPracticeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUIPracticeBinding
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
-    private val backGroundThread = Thread()
+    private val threadPool = ThreadPoolExecutor(
+        NUMBER_OF_CORES * 2,
+        NUMBER_OF_CORES * 2,
+        60L,
+        TimeUnit.SECONDS,
+        LinkedBlockingQueue<Runnable>(),
+    );
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,8 +68,7 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
-        backGroundThread.run {
-            if (this.isInterrupted) return
+        threadPool.run {
             RetrofitClient.getCurrentWeather().enqueue(object : Callback<CurrentWeatherForecast> {
                 override fun onResponse(
                     call: Call<CurrentWeatherForecast>,
@@ -78,7 +86,6 @@ class UIPracticeActivity : AppCompatActivity() {
                 }
 
             })
-            if (this.isInterrupted) return
             RetrofitClient.getWeatherForecast().enqueue(object : Callback<WeatherForecast> {
                 override fun onResponse(
                     call: Call<WeatherForecast>,
@@ -146,10 +153,5 @@ class UIPracticeActivity : AppCompatActivity() {
 
     private fun showMessageToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        backGroundThread.interrupt()
     }
 }
