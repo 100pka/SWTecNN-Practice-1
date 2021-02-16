@@ -4,14 +4,20 @@ import android.annotation.SuppressLint
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.data.Weather
 import com.stopkaaaa.swtec_practice.data.WeatherState
 import com.stopkaaaa.swtec_practice.databinding.WeatherItemBinding
+import smart.sprinkler.app.api.model.DailyForecast
+import kotlin.math.roundToInt
+
+const val MAX_ITEMS_TO_SHOW = 5
 
 class WhetherAdapter() : RecyclerView.Adapter<WhetherViewHolder>() {
 
-    private val weatherList: MutableList<Weather> = mutableListOf()
+
+    private val weatherList: MutableList<DailyForecast> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WhetherViewHolder {
         val binding = WeatherItemBinding
@@ -29,7 +35,7 @@ class WhetherAdapter() : RecyclerView.Adapter<WhetherViewHolder>() {
         return weatherList.size
     }
 
-    fun bindWhetherList(newWeatherList: List<Weather>) {
+    fun bindWhetherList(newWeatherList: List<DailyForecast>) {
         weatherList.clear()
         weatherList.addAll(newWeatherList)
         notifyDataSetChanged()
@@ -39,36 +45,12 @@ class WhetherAdapter() : RecyclerView.Adapter<WhetherViewHolder>() {
 class WhetherViewHolder(private val binding: WeatherItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-    fun onBind(weather: Weather) {
-        binding.date.text = weather.date
-        binding.temperature.text = weather.temperature.toString() + "\u00B0"
-        when (weather.icon) {
-            WeatherState.RAIN -> binding.weatherIcon.apply {
-                setImageDrawable(
-                    binding.root.resources.getDrawable(
-                        R.drawable.rain, binding.root.context.theme
-                    )
-                )
-                contentDescription = "Possible rain"
-            }
+    fun onBind(weather: DailyForecast) {
+        binding.date.text = weather.getDate()
+        binding.temperature.text = (weather.temp.day).roundToInt().toString() + "\u00B0"
 
-            WeatherState.CLOUDY -> binding.weatherIcon.apply {
-                setImageDrawable(
-                    binding.root.resources.getDrawable(
-                        R.drawable.cloudy, binding.root.context.theme
-                    )
-                )
-                contentDescription = "Mostly cloudy"
-            }
-
-            WeatherState.PARTLY_CLOUDY -> binding.weatherIcon.apply {
-                setImageDrawable(
-                    binding.root.resources.getDrawable(
-                        R.drawable.partly_cloudy, binding.root.context.theme
-                    )
-                )
-                contentDescription = "Partly cloudy"
-            }
-        }
+        Glide.with(binding.root.context)
+            .load(weather.weatherImage[0].getIconUrl())
+            .into(binding.weatherIcon)
     }
 }

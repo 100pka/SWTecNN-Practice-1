@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.viewModels
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
@@ -13,10 +14,13 @@ import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.data.Weather
 import com.stopkaaaa.swtec_practice.data.WeatherState
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
+import smart.sprinkler.app.api.model.CurrentWeatherForecast
+import smart.sprinkler.app.api.model.DailyForecast
 
 class UIPracticeActivity : AppCompatActivity() {
 
-    lateinit var binding: ActivityUIPracticeBinding
+    private lateinit var binding: ActivityUIPracticeBinding
+    private val viewModel: UIPracticeActivityViewModel by viewModels()
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
 
@@ -25,6 +29,7 @@ class UIPracticeActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityUIPracticeBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> binding.horizontalGuideline.setGuidelinePercent(0.50f)
@@ -47,6 +52,8 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
+        viewModel.currentWeather.observe(this, this::setCurrentWeather)
+        viewModel.dailyForecastList.observe(this, this::setDailyForecastList)
 
         Log.d("MainActivity: ", "OnCreate" )
     }
@@ -78,11 +85,19 @@ class UIPracticeActivity : AppCompatActivity() {
     }
 
     private fun setupWhetherRecycler() {
-        whetherAdapter.bindWhetherList(getWhetherList())
         binding.weatherRv.adapter = whetherAdapter
     }
 
     private fun resetSprinklerCheckboxes() {
         locationAdapter.bindLocationsList(getLocationsList())
+    }
+
+    private fun setCurrentWeather(currentWeatherForecast: CurrentWeatherForecast) {
+        binding.temperature.text = resources.getString(R.string.celcium_27, currentWeatherForecast.weather.temp)
+        binding.humidity.text = resources.getString(R.string.percent_73, currentWeatherForecast.weather.humidity)
+    }
+
+    private fun setDailyForecastList(dailyForecastList: List<DailyForecast>) {
+        whetherAdapter.bindWhetherList(dailyForecastList)
     }
 }
