@@ -1,6 +1,5 @@
 package com.stopkaaaa.swtec_practice.ui
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Color
@@ -11,7 +10,6 @@ import androidx.constraintlayout.widget.ConstraintLayout
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.databinding.MyCustomViewBinding
 
-@SuppressLint("Recycle")
 class MyCustomView @JvmOverloads constructor(
     context: Context,
     attrs: AttributeSet? = null,
@@ -31,6 +29,8 @@ class MyCustomView @JvmOverloads constructor(
         binding = MyCustomViewBinding.inflate(LayoutInflater.from(context), this)
 
         setWillNotDraw(false)
+
+        typedArray.recycle()
     }
 
     override fun onDraw(canvas: Canvas?) {

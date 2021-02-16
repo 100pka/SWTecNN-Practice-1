@@ -1,5 +1,5 @@
 package com.stopkaaaa.swtec_practice.data
 
-enum class WhetherState {
+enum class WeatherState {
     RAIN, CLOUDY, PARTLY_CLOUDY
 }

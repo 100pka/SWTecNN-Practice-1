@@ -5,16 +5,16 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.stopkaaaa.swtec_practice.R
-import com.stopkaaaa.swtec_practice.data.Whether
-import com.stopkaaaa.swtec_practice.data.WhetherState
-import com.stopkaaaa.swtec_practice.databinding.WhetherItemBinding
+import com.stopkaaaa.swtec_practice.data.Weather
+import com.stopkaaaa.swtec_practice.data.WeatherState
+import com.stopkaaaa.swtec_practice.databinding.WeatherItemBinding
 
 class WhetherAdapter() : RecyclerView.Adapter<WhetherViewHolder>() {
 
-    private val whetherList: MutableList<Whether> = mutableListOf()
+    private val weatherList: MutableList<Weather> = mutableListOf()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WhetherViewHolder {
-        val binding = WhetherItemBinding
+        val binding = WeatherItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = WhetherViewHolder(binding)
         holder.itemView.isFocusable = true
@@ -22,28 +22,28 @@ class WhetherAdapter() : RecyclerView.Adapter<WhetherViewHolder>() {
     }
 
     override fun onBindViewHolder(holder: WhetherViewHolder, position: Int) {
-        holder.onBind(whetherList[position])
+        holder.onBind(weatherList[position])
     }
 
     override fun getItemCount(): Int {
-        return whetherList.size
+        return weatherList.size
     }
 
-    fun bindWhetherList(newWhetherList: List<Whether>) {
-        whetherList.clear()
-        whetherList.addAll(newWhetherList)
+    fun bindWhetherList(newWeatherList: List<Weather>) {
+        weatherList.clear()
+        weatherList.addAll(newWeatherList)
         notifyDataSetChanged()
     }
 }
 
-class WhetherViewHolder(private val binding: WhetherItemBinding) :
+class WhetherViewHolder(private val binding: WeatherItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-    fun onBind(whether: Whether) {
-        binding.date.text = whether.date
-        binding.temperature.text = whether.temperature.toString() + "\u00B0"
-        when (whether.icon) {
-            WhetherState.RAIN -> binding.whetherIcon.apply {
+    fun onBind(weather: Weather) {
+        binding.date.text = weather.date
+        binding.temperature.text = weather.temperature.toString() + "\u00B0"
+        when (weather.icon) {
+            WeatherState.RAIN -> binding.weatherIcon.apply {
                 setImageDrawable(
                     binding.root.resources.getDrawable(
                         R.drawable.rain, binding.root.context.theme
@@ -52,7 +52,7 @@ class WhetherViewHolder(private val binding: WhetherItemBinding) :
                 contentDescription = "Possible rain"
             }
 
-            WhetherState.CLOUDY -> binding.whetherIcon.apply {
+            WeatherState.CLOUDY -> binding.weatherIcon.apply {
                 setImageDrawable(
                     binding.root.resources.getDrawable(
                         R.drawable.cloudy, binding.root.context.theme
@@ -61,7 +61,7 @@ class WhetherViewHolder(private val binding: WhetherItemBinding) :
                 contentDescription = "Mostly cloudy"
             }
 
-            WhetherState.PARTLY_CLOUDY -> binding.whetherIcon.apply {
+            WeatherState.PARTLY_CLOUDY -> binding.weatherIcon.apply {
                 setImageDrawable(
                     binding.root.resources.getDrawable(
                         R.drawable.partly_cloudy, binding.root.context.theme

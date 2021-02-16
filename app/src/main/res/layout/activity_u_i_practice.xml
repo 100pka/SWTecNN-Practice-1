@@ -22,7 +22,7 @@
         app:layout_constraintGuide_end="@dimen/margin_12" />
 
     <androidx.constraintlayout.widget.Guideline
-        android:id="@+id/whether_guideline"
+        android:id="@+id/weather_guideline"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -43,16 +43,16 @@
         app:layout_constraintGuide_percent="0.50" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/whether_rv"
+        android:id="@+id/weather_rv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/margin_24"
         android:layout_marginEnd="@dimen/margin_24"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/start_margin_guideline"
-        app:layout_constraintEnd_toStartOf="@+id/whether_guideline"
+        app:layout_constraintEnd_toStartOf="@+id/weather_guideline"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        tools:listitem="@layout/whether_item"
+        tools:listitem="@layout/weather_item"
         tools:itemCount="3"
         android:overScrollMode="never"/>
 
@@ -62,7 +62,7 @@
         android:layout_height="0dp"
         android:button="@null"
         app:layout_constraintEnd_toStartOf="@+id/locations_guideline"
-        app:layout_constraintStart_toEndOf="@id/whether_guideline"
+        app:layout_constraintStart_toEndOf="@id/weather_guideline"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
@@ -72,7 +72,7 @@
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/margin_24"
         app:layout_constraintEnd_toStartOf="@+id/locations_guideline"
-        app:layout_constraintStart_toEndOf="@id/whether_guideline"
+        app:layout_constraintStart_toEndOf="@id/weather_guideline"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintBottom_toTopOf="@+id/horizontal_guideline"
         android:src="@drawable/sprinkler_icon_off"

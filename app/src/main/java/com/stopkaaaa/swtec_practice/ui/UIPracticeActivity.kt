@@ -10,8 +10,8 @@ import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
 import com.stopkaaaa.swtec_practice.adapters.WhetherAdapter
 import com.stopkaaaa.swtec_practice.data.Location
-import com.stopkaaaa.swtec_practice.data.Whether
-import com.stopkaaaa.swtec_practice.data.WhetherState
+import com.stopkaaaa.swtec_practice.data.Weather
+import com.stopkaaaa.swtec_practice.data.WeatherState
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
 
 class UIPracticeActivity : AppCompatActivity() {
@@ -51,11 +51,11 @@ class UIPracticeActivity : AppCompatActivity() {
         Log.d("MainActivity: ", "OnCreate" )
     }
 
-    private fun getWhetherList() : List<Whether> {
+    private fun getWhetherList() : List<Weather> {
         return listOf(
-            Whether("February 7, 2020", 23, WhetherState.RAIN),
-            Whether("February 8, 2020", 23, WhetherState.CLOUDY),
-            Whether("February 9, 2020", 25, WhetherState.PARTLY_CLOUDY)
+            Weather("February 7, 2020", 23, WeatherState.RAIN),
+            Weather("February 8, 2020", 23, WeatherState.CLOUDY),
+            Weather("February 9, 2020", 25, WeatherState.PARTLY_CLOUDY)
         )
     }
 
@@ -79,7 +79,7 @@ class UIPracticeActivity : AppCompatActivity() {
 
     private fun setupWhetherRecycler() {
         whetherAdapter.bindWhetherList(getWhetherList())
-        binding.whetherRv.adapter = whetherAdapter
+        binding.weatherRv.adapter = whetherAdapter
     }
 
     private fun resetSprinklerCheckboxes() {
