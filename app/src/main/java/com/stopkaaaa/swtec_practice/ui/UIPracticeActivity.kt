@@ -2,28 +2,23 @@ package com.stopkaaaa.swtec_practice.ui
 
 import android.annotation.SuppressLint
 import android.content.res.Configuration
+import android.os.AsyncTask
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.loader.app.LoaderManager
-import androidx.loader.content.Loader
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
 import com.stopkaaaa.swtec_practice.adapters.WhetherAdapter
-import com.stopkaaaa.swtec_practice.api.CurrentWeatherForecastLoader
-import com.stopkaaaa.swtec_practice.api.WeatherForecastLoader
 import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
+import smart.sprinkler.app.api.RetrofitClient
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
 import smart.sprinkler.app.api.model.WeatherForecast
-import java.lang.RuntimeException
-
-const val CURRENT_WEATHER_LOADER_ID = 52
-const val DAILY_WEATHER_LOADER_ID = 152
-
+import java.lang.Exception
+import java.lang.ref.WeakReference
 
 class UIPracticeActivity : AppCompatActivity() {
 
@@ -61,12 +56,8 @@ class UIPracticeActivity : AppCompatActivity() {
                 binding.sprinklerIcon.setImageDrawable(getDrawable(R.drawable.sprinkler_off))
             }
         }
-
-        val currentWeatherForecastLoader = CurrentWeatherForecastLoaderCallbacks()
-        val dailyWeatherForecastLoader = WeatherForecastLoaderCallbacks()
-
-        supportLoaderManager.initLoader(CURRENT_WEATHER_LOADER_ID, Bundle(), currentWeatherForecastLoader)
-        supportLoaderManager.initLoader(DAILY_WEATHER_LOADER_ID, Bundle(), dailyWeatherForecastLoader)
+        CurrentWeatherForecastAsync(this).execute()
+        DailyWeatherForecastAsync(this).execute()
 
         Log.d("MainActivity: ", "OnCreate")
     }
@@ -118,45 +109,47 @@ class UIPracticeActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    inner class CurrentWeatherForecastLoaderCallbacks :
-        LoaderManager.LoaderCallbacks<CurrentWeatherForecast> {
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<CurrentWeatherForecast> {
-            if (id == CURRENT_WEATHER_LOADER_ID) {
-                return CurrentWeatherForecastLoader(this@UIPracticeActivity)
+    companion object {
+        class CurrentWeatherForecastAsync(context: UIPracticeActivity) : AsyncTask<Void, Void, CurrentWeatherForecast?>() {
+
+            private val activityReference: WeakReference<UIPracticeActivity> = WeakReference(context)
+            var currentWeather : CurrentWeatherForecast? = null
+
+            override fun doInBackground(vararg params: Void?): CurrentWeatherForecast? {
+                try {
+                    currentWeather = RetrofitClient.getCurrentWeather().execute().body()
+                } catch (e: Exception) {
+                    Log.d("Retrofit onFailure: ", e.message.toString())
+                }
+                return currentWeather
             }
-            throw RuntimeException("Wrong Loader ID")
-        }
 
-        override fun onLoadFinished(
-            loader: Loader<CurrentWeatherForecast>,
-            data: CurrentWeatherForecast?
-        ) {
-            data?.let { setCurrentWeather(it) }
-        }
-
-        override fun onLoaderReset(loader: Loader<CurrentWeatherForecast>) {
-
-        }
-    }
-
-    inner class WeatherForecastLoaderCallbacks :
-        LoaderManager.LoaderCallbacks<WeatherForecast> {
-        override fun onCreateLoader(id: Int, args: Bundle?): Loader<WeatherForecast> {
-            if (id == DAILY_WEATHER_LOADER_ID) {
-                return WeatherForecastLoader(this@UIPracticeActivity)
+            override fun onPostExecute(result: CurrentWeatherForecast?) {
+                val activity = activityReference.get()
+                if (activity == null || activity.isFinishing) return
+                result?.let { activity.setCurrentWeather(it) }
             }
-            throw RuntimeException("Wrong Loader ID")
         }
 
-        override fun onLoadFinished(
-            loader: Loader<WeatherForecast>,
-            data: WeatherForecast?
-        ) {
-            data?.let { setDailyForecastList(it.daily.subList(0, 5)) }
-        }
+        class DailyWeatherForecastAsync(context: UIPracticeActivity) : AsyncTask<Void, Void, WeatherForecast?>() {
 
-        override fun onLoaderReset(loader: Loader<WeatherForecast>) {
+            private val activityReference: WeakReference<UIPracticeActivity> = WeakReference(context)
+            var dailyWeather : WeatherForecast? = null
 
+            override fun doInBackground(vararg params: Void?): WeatherForecast? {
+                try {
+                    dailyWeather = RetrofitClient.getWeatherForecast().execute().body()
+                } catch (e: Exception) {
+                    Log.d("Retrofit onFailure: ", e.message.toString())
+                }
+                return dailyWeather
+            }
+
+            override fun onPostExecute(result: WeatherForecast?) {
+                val activity = activityReference.get()
+                if (activity == null || activity.isFinishing) return
+                result?.let { activity.setDailyForecastList(it.daily.subList(0, 5)) }
+            }
         }
     }
 }
