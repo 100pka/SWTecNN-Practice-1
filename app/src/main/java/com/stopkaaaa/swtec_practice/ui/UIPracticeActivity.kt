@@ -66,12 +66,14 @@ class UIPracticeActivity : AppCompatActivity() {
                     call: Call<CurrentWeatherForecast>,
                     response: Response<CurrentWeatherForecast>
                 ) {
+                    if (this@run.isInterrupted) return
                     this@UIPracticeActivity.runOnUiThread {
                         response.body()?.let { setCurrentWeather(it) }
                     }
                 }
 
                 override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
+                    if (this@run.isInterrupted) return
                     this@UIPracticeActivity.runOnUiThread {
                         showMessageToast("Something went wrong: " + t.message)
                     }
@@ -84,12 +86,14 @@ class UIPracticeActivity : AppCompatActivity() {
                     call: Call<WeatherForecast>,
                     response: Response<WeatherForecast>
                 ) {
+                    if (this@run.isInterrupted) return
                     this@UIPracticeActivity.runOnUiThread {
                         response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
                     }
                 }
 
                 override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
+                    if (this@run.isInterrupted) return
                     this@UIPracticeActivity.runOnUiThread {
                         showMessageToast("Something went wrong: " + t.message)
                     }
