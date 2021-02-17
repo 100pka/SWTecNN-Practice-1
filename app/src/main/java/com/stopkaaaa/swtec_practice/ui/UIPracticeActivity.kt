@@ -4,30 +4,33 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Message
 import android.util.Log
 import android.widget.Toast
-import androidx.activity.viewModels
+import androidx.loader.app.LoaderManager
+import androidx.loader.content.Loader
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
 import com.stopkaaaa.swtec_practice.adapters.WhetherAdapter
+import com.stopkaaaa.swtec_practice.api.CurrentWeatherForecastLoader
+import com.stopkaaaa.swtec_practice.api.WeatherForecastLoader
 import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import smart.sprinkler.app.api.RetrofitClient
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
 import smart.sprinkler.app.api.model.WeatherForecast
+import java.lang.RuntimeException
+
+const val CURRENT_WEATHER_LOADER_ID = 52
+const val DAILY_WEATHER_LOADER_ID = 152
+
 
 class UIPracticeActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityUIPracticeBinding
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
-    private val backGroundThread = Thread()
+
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,44 +62,11 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
-        backGroundThread.run {
-            if (this.isInterrupted) return
-            RetrofitClient.getCurrentWeather().enqueue(object : Callback<CurrentWeatherForecast> {
-                override fun onResponse(
-                    call: Call<CurrentWeatherForecast>,
-                    response: Response<CurrentWeatherForecast>
-                ) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        response.body()?.let { setCurrentWeather(it) }
-                    }
-                }
+        val currentWeatherForecastLoader = CurrentWeatherForecastLoaderCallbacks()
+        val dailyWeatherForecastLoader = WeatherForecastLoaderCallbacks()
 
-                override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
-            if (this.isInterrupted) return
-            RetrofitClient.getWeatherForecast().enqueue(object : Callback<WeatherForecast> {
-                override fun onResponse(
-                    call: Call<WeatherForecast>,
-                    response: Response<WeatherForecast>
-                ) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
-                    }
-                }
-
-                override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
-        }
+        supportLoaderManager.initLoader(CURRENT_WEATHER_LOADER_ID, Bundle(), currentWeatherForecastLoader)
+        supportLoaderManager.initLoader(DAILY_WEATHER_LOADER_ID, Bundle(), dailyWeatherForecastLoader)
 
         Log.d("MainActivity: ", "OnCreate")
     }
@@ -148,8 +118,45 @@ class UIPracticeActivity : AppCompatActivity() {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        backGroundThread.interrupt()
+    inner class CurrentWeatherForecastLoaderCallbacks :
+        LoaderManager.LoaderCallbacks<CurrentWeatherForecast> {
+        override fun onCreateLoader(id: Int, args: Bundle?): Loader<CurrentWeatherForecast> {
+            if (id == CURRENT_WEATHER_LOADER_ID) {
+                return CurrentWeatherForecastLoader(this@UIPracticeActivity)
+            }
+            throw RuntimeException("Wrong Loader ID")
+        }
+
+        override fun onLoadFinished(
+            loader: Loader<CurrentWeatherForecast>,
+            data: CurrentWeatherForecast?
+        ) {
+            data?.let { setCurrentWeather(it) }
+        }
+
+        override fun onLoaderReset(loader: Loader<CurrentWeatherForecast>) {
+
+        }
+    }
+
+    inner class WeatherForecastLoaderCallbacks :
+        LoaderManager.LoaderCallbacks<WeatherForecast> {
+        override fun onCreateLoader(id: Int, args: Bundle?): Loader<WeatherForecast> {
+            if (id == DAILY_WEATHER_LOADER_ID) {
+                return WeatherForecastLoader(this@UIPracticeActivity)
+            }
+            throw RuntimeException("Wrong Loader ID")
+        }
+
+        override fun onLoadFinished(
+            loader: Loader<WeatherForecast>,
+            data: WeatherForecast?
+        ) {
+            data?.let { setDailyForecastList(it.daily.subList(0, 5)) }
+        }
+
+        override fun onLoaderReset(loader: Loader<WeatherForecast>) {
+
+        }
     }
 }

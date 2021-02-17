@@ -11,6 +11,8 @@ import smart.sprinkler.app.api.model.WeatherForecast
 
 private const val API_KEY = "4b7a044e1a4df3a657a78c9725be33ac"
 
+//private const val API_KEY = "92dd28f1dc9baf629b40f09a07ff87ac"
+
 interface RetrofitService {
 
     @GET("data/2.5/onecall")
