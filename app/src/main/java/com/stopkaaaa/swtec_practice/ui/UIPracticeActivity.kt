@@ -22,6 +22,7 @@ import smart.sprinkler.app.api.RetrofitClient
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
 import smart.sprinkler.app.api.model.WeatherForecast
+import java.lang.Exception
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
@@ -70,43 +71,32 @@ class UIPracticeActivity : AppCompatActivity() {
         val backgroundHandler = Handler(handlerThread.looper)
 
         backgroundHandler.post {
-            val result = RetrofitClient.getCurrentWeather().execute()
-//            enqueue(object : Callback<CurrentWeatherForecast> {
-//                override fun onResponse(
-//                    call: Call<CurrentWeatherForecast>,
-//                    response: Response<CurrentWeatherForecast>
-//                ) {
-//                    uiHandler.post {
-//                        response.body()?.let { setCurrentWeather(it) }
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
-//                    uiHandler.post {
-//                        showMessageToast("Something went wrong: " + t.message)
-//                    }
-//                }
-//
-//            })
-//            RetrofitClient.getWeatherForecast().enqueue(object : Callback<WeatherForecast> {
-//                override fun onResponse(
-//                    call: Call<WeatherForecast>,
-//                    response: Response<WeatherForecast>
-//                ) {
-//                    uiHandler.post {
-//                        response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
-//                    }
-//                }
-//
-//                override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
-//                    uiHandler.post {
-//                        showMessageToast("Something went wrong: " + t.message)
-//                    }
-//                }
-//
-//            })
-        }
+            var currentWeather: CurrentWeatherForecast? = null
+            val dailyWeather: MutableList<DailyForecast> = mutableListOf()
 
+            try {
+                currentWeather = RetrofitClient.getCurrentWeather().execute().body()
+                RetrofitClient.getWeatherForecast().execute().body()?.daily?.let {
+                    dailyWeather.addAll(
+                        it
+                    )
+                }
+            } catch (e: Exception) {
+                Log.d("Retrofit onFailure: ", e.message.toString())
+            }
+
+            currentWeather?.let {
+                uiHandler.post {
+                    setCurrentWeather(it)
+                }
+            }
+
+            if (dailyWeather.isNotEmpty()) {
+                uiHandler.post {
+                    setDailyForecastList(dailyWeather.subList(0, 5))
+                }
+            }
+        }
         Log.d("MainActivity: ", "OnCreate")
     }
 
