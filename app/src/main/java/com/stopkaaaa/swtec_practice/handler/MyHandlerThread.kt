@@ -15,7 +15,6 @@ class MyHandlerThread(name: String) : HandlerThread(name, android.os.Process.THR
     // use weak reference to avoid activity being leaked
     var callback: WeakReference<BindResultCallback>? = null
 
-    // Used by UI thread to send a runnable to the worker thread's message queue
     fun getWeatherData(){
         handler = Handler(looper)
         handler.post{
@@ -41,7 +40,6 @@ class MyHandlerThread(name: String) : HandlerThread(name, android.os.Process.THR
         }
     }
 
-    // The UiThreadCallback is used to send message to UI thread
     fun setBindResultCallback(callback: BindResultCallback){
         this.callback = WeakReference<BindResultCallback>(callback)
     }
