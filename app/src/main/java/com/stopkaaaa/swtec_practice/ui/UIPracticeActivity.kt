@@ -12,6 +12,9 @@ import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
 import com.stopkaaaa.swtec_practice.adapters.WhetherAdapter
 import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
+import com.stopkaaaa.swtec_practice.threadpool.GetForecastDataCallable
+import com.stopkaaaa.swtec_practice.threadpool.ThreadPoolManager
+import com.stopkaaaa.swtec_practice.threadpool.UiThreadCallback
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -23,20 +26,11 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-val NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors()
-
-class UIPracticeActivity : AppCompatActivity() {
+class UIPracticeActivity : AppCompatActivity(), UiThreadCallback {
 
     private lateinit var binding: ActivityUIPracticeBinding
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
-    private val threadPool = ThreadPoolExecutor(
-        NUMBER_OF_CORES * 2,
-        NUMBER_OF_CORES * 2,
-        60L,
-        TimeUnit.SECONDS,
-        LinkedBlockingQueue<Runnable>(),
-    );
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,42 +62,10 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
-        threadPool.run {
-            RetrofitClient.getCurrentWeather().enqueue(object : Callback<CurrentWeatherForecast> {
-                override fun onResponse(
-                    call: Call<CurrentWeatherForecast>,
-                    response: Response<CurrentWeatherForecast>
-                ) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        response.body()?.let { setCurrentWeather(it) }
-                    }
-                }
-
-                override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
-            RetrofitClient.getWeatherForecast().enqueue(object : Callback<WeatherForecast> {
-                override fun onResponse(
-                    call: Call<WeatherForecast>,
-                    response: Response<WeatherForecast>
-                ) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
-                    }
-                }
-
-                override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
-                    this@UIPracticeActivity.runOnUiThread {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
-        }
+        val callable = GetForecastDataCallable()
+        callable.setThreadPoolManager(ThreadPoolManager)
+        ThreadPoolManager.setBindResultCallback(this)
+        ThreadPoolManager.addCallable(callable)
 
         Log.d("MainActivity: ", "OnCreate")
     }
@@ -153,5 +115,9 @@ class UIPracticeActivity : AppCompatActivity() {
 
     private fun showMessageToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    }
+
+    override fun bindResult(currentWeather: CurrentWeatherForecast) {
+        setCurrentWeather(currentWeather)
     }
 }
