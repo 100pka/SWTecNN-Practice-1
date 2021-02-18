@@ -15,6 +15,8 @@ import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
 import com.stopkaaaa.swtec_practice.adapters.WhetherAdapter
 import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
+import com.stopkaaaa.swtec_practice.handler.BindResultCallback
+import com.stopkaaaa.swtec_practice.handler.MyHandlerThread
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -27,22 +29,18 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ThreadPoolExecutor
 import java.util.concurrent.TimeUnit
 
-val NUMBER_OF_CORES = Runtime.getRuntime().availableProcessors()
-
-class UIPracticeActivity : AppCompatActivity() {
+class UIPracticeActivity : AppCompatActivity(), BindResultCallback {
 
     private lateinit var binding: ActivityUIPracticeBinding
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
-    private val handlerThread = HandlerThread("backGround thread")
-    private val uiHandler = Handler(Looper.getMainLooper())
+    lateinit var handlerThread: MyHandlerThread
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityUIPracticeBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
 
         when (resources.configuration.orientation) {
             Configuration.ORIENTATION_LANDSCAPE -> binding.horizontalGuideline.setGuidelinePercent(
@@ -66,41 +64,22 @@ class UIPracticeActivity : AppCompatActivity() {
                 binding.sprinklerIcon.setImageDrawable(getDrawable(R.drawable.sprinkler_off))
             }
         }
-
-        handlerThread.start()
-        val backgroundHandler = Handler(handlerThread.looper)
-
-        backgroundHandler.post {
-            var currentWeather: CurrentWeatherForecast? = null
-            val dailyWeather: MutableList<DailyForecast> = mutableListOf()
-
-            try {
-                currentWeather = RetrofitClient.getCurrentWeather().execute().body()
-                RetrofitClient.getWeatherForecast().execute().body()?.daily?.let {
-                    dailyWeather.clear()
-                    dailyWeather.addAll(
-                        it
-                    )
-                }
-            } catch (e: Exception) {
-                Log.d("Retrofit onFailure: ", e.message.toString())
-            }
-
-            currentWeather?.let {
-                uiHandler.post {
-                    setCurrentWeather(it)
-                }
-            }
-
-            if (dailyWeather.isNotEmpty()) {
-                uiHandler.post {
-                    setDailyForecastList(dailyWeather.subList(0, 5))
-                }
-            }
-        }
         Log.d("MainActivity: ", "OnCreate")
     }
 
+    override fun onStart() {
+        super.onStart()
+        handlerThread = MyHandlerThread("background handlerThread")
+        handlerThread.setBindResultCallback(this)
+        handlerThread.start()
+        handlerThread.getWeatherData()
+    }
+
+    override fun onStop() {
+        super.onStop()
+        handlerThread.quit()
+        handlerThread.interrupt()
+    }
 
     private fun getLocationsList(): List<Location> {
         return listOf(
@@ -144,7 +123,11 @@ class UIPracticeActivity : AppCompatActivity() {
         whetherAdapter.bindWhetherList(dailyForecastList)
     }
 
-    private fun showMessageToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    override fun bindResult(
+        currentWeatherForecast: CurrentWeatherForecast,
+        dailyWeather: List<DailyForecast>
+    ) {
+        setCurrentWeather(currentWeatherForecast)
+        setDailyForecastList(dailyWeather)
     }
 }
