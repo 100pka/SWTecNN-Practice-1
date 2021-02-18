@@ -66,41 +66,45 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
-        handlerThread.run {
-            RetrofitClient.getCurrentWeather().enqueue(object : Callback<CurrentWeatherForecast> {
-                override fun onResponse(
-                    call: Call<CurrentWeatherForecast>,
-                    response: Response<CurrentWeatherForecast>
-                ) {
-                    uiHandler.post {
-                        response.body()?.let { setCurrentWeather(it) }
-                    }
-                }
+        handlerThread.start()
+        val backgroundHandler = Handler(handlerThread.looper)
 
-                override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
-                    uiHandler.post {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
-            RetrofitClient.getWeatherForecast().enqueue(object : Callback<WeatherForecast> {
-                override fun onResponse(
-                    call: Call<WeatherForecast>,
-                    response: Response<WeatherForecast>
-                ) {
-                    uiHandler.post {
-                        response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
-                    }
-                }
-
-                override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
-                    uiHandler.post {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
+        backgroundHandler.post {
+            val result = RetrofitClient.getCurrentWeather().execute()
+//            enqueue(object : Callback<CurrentWeatherForecast> {
+//                override fun onResponse(
+//                    call: Call<CurrentWeatherForecast>,
+//                    response: Response<CurrentWeatherForecast>
+//                ) {
+//                    uiHandler.post {
+//                        response.body()?.let { setCurrentWeather(it) }
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
+//                    uiHandler.post {
+//                        showMessageToast("Something went wrong: " + t.message)
+//                    }
+//                }
+//
+//            })
+//            RetrofitClient.getWeatherForecast().enqueue(object : Callback<WeatherForecast> {
+//                override fun onResponse(
+//                    call: Call<WeatherForecast>,
+//                    response: Response<WeatherForecast>
+//                ) {
+//                    uiHandler.post {
+//                        response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
+//                    }
+//                }
+//
+//                override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
+//                    uiHandler.post {
+//                        showMessageToast("Something went wrong: " + t.message)
+//                    }
+//                }
+//
+//            })
         }
 
         Log.d("MainActivity: ", "OnCreate")
