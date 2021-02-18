@@ -77,6 +77,7 @@ class UIPracticeActivity : AppCompatActivity() {
             try {
                 currentWeather = RetrofitClient.getCurrentWeather().execute().body()
                 RetrofitClient.getWeatherForecast().execute().body()?.daily?.let {
+                    dailyWeather.clear()
                     dailyWeather.addAll(
                         it
                     )
