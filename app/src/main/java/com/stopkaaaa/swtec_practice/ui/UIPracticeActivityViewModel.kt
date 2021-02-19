@@ -10,6 +10,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
+import java.lang.Exception
 
 class UIPracticeActivityViewModel : ViewModel() {
 
@@ -31,15 +32,29 @@ class UIPracticeActivityViewModel : ViewModel() {
             _mutableCurrentWeatherLoadingState.value = CurrentWeatherLoadingState.LOADING
             _mutableDailyWeatherLoadingState.value = DailyWeatherLoadingState.LOADING
 
-            val current = RetrofitClient.getCurrentWeather()
+            val current = try {
+                RetrofitClient.getCurrentWeather()
+            } catch (e: Exception) {
+                _mutableCurrentWeatherLoadingState.value = CurrentWeatherLoadingState.ERROR
+                null
+            }
 
-            val daily = RetrofitClient.getWeatherForecast().daily
+            val daily = try {
+                RetrofitClient.getWeatherForecast().daily
+            } catch (e: Exception) {
+                _mutableDailyWeatherLoadingState.value = DailyWeatherLoadingState.ERROR
+                null
+            }
 
-            _mutableCurrentWeather.value = current
-            _mutableDailyForecastList.value = daily.subList(0, 5)
+            current?.let {
+                _mutableCurrentWeather.value = it
+                _mutableCurrentWeatherLoadingState.value = CurrentWeatherLoadingState.DONE
+            }
 
-            _mutableCurrentWeatherLoadingState.value = CurrentWeatherLoadingState.DONE
-            _mutableDailyWeatherLoadingState.value = DailyWeatherLoadingState.DONE
+            daily?.let {
+                _mutableDailyForecastList.value = it.subList(0, 5)
+                _mutableDailyWeatherLoadingState.value = DailyWeatherLoadingState.DONE
+            }
         }
     }
 }

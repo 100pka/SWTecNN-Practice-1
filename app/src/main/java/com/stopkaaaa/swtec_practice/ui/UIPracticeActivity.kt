@@ -5,6 +5,7 @@ import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.view.isInvisible
 import androidx.core.view.isVisible
@@ -119,6 +120,14 @@ class UIPracticeActivity : AppCompatActivity() {
                 binding.temperatureProgress.isVisible = false
                 binding.humidityProgress.isVisible = false
             }
+
+            CurrentWeatherLoadingState.ERROR -> {
+                binding.temperature.isInvisible = true
+                binding.humidity.isInvisible = true
+                binding.temperatureProgress.isVisible = false
+                binding.humidityProgress.isVisible = false
+                Toast.makeText(this, "Something went wrong while loading", Toast.LENGTH_LONG).show()
+            }
         }
     }
 
@@ -131,6 +140,12 @@ class UIPracticeActivity : AppCompatActivity() {
             DailyWeatherLoadingState.DONE -> {
                 binding.weatherRv.isInvisible = false
                 binding.weatherRvProgress.isVisible = false
+            }
+
+            DailyWeatherLoadingState.ERROR -> {
+                binding.weatherRv.isInvisible = true
+                binding.weatherRvProgress.isVisible = false
+                Toast.makeText(this, "Something went wrong while loading", Toast.LENGTH_LONG).show()
             }
         }
     }
