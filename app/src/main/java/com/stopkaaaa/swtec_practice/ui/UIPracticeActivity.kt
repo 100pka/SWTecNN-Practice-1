@@ -22,12 +22,12 @@ import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
 import smart.sprinkler.app.api.model.WeatherForecast
 
-class UIPracticeActivity : AppCompatActivity() {
+class UIPracticeActivity : AppCompatActivity(), UiThreadCallback {
 
     private lateinit var binding: ActivityUIPracticeBinding
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
-    private val backGroundThread = Thread()
+    private val backGroundThread = MyThread()
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -59,49 +59,8 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
-        backGroundThread.run {
-            if (this.isInterrupted) return
-            RetrofitClient.getCurrentWeather().enqueue(object : Callback<CurrentWeatherForecast> {
-                override fun onResponse(
-                    call: Call<CurrentWeatherForecast>,
-                    response: Response<CurrentWeatherForecast>
-                ) {
-                    if (this@run.isInterrupted) return
-                    this@UIPracticeActivity.runOnUiThread {
-                        response.body()?.let { setCurrentWeather(it) }
-                    }
-                }
-
-                override fun onFailure(call: Call<CurrentWeatherForecast>, t: Throwable) {
-                    if (this@run.isInterrupted) return
-                    this@UIPracticeActivity.runOnUiThread {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
-            if (this.isInterrupted) return
-            RetrofitClient.getWeatherForecast().enqueue(object : Callback<WeatherForecast> {
-                override fun onResponse(
-                    call: Call<WeatherForecast>,
-                    response: Response<WeatherForecast>
-                ) {
-                    if (this@run.isInterrupted) return
-                    this@UIPracticeActivity.runOnUiThread {
-                        response.body()?.let { setDailyForecastList(it.daily.subList(0, 5)) }
-                    }
-                }
-
-                override fun onFailure(call: Call<WeatherForecast>, t: Throwable) {
-                    if (this@run.isInterrupted) return
-                    this@UIPracticeActivity.runOnUiThread {
-                        showMessageToast("Something went wrong: " + t.message)
-                    }
-                }
-
-            })
-        }
-
+        backGroundThread.setUiThreadCallback(this)
+        backGroundThread.start()
         Log.d("MainActivity: ", "OnCreate")
     }
 
@@ -137,18 +96,18 @@ class UIPracticeActivity : AppCompatActivity() {
         locationAdapter.bindLocationsList(getLocationsList())
     }
 
-    private fun setCurrentWeather(currentWeatherForecast: CurrentWeatherForecast) {
+    override fun setCurrentWeather(currentWeatherForecast: CurrentWeatherForecast) {
         binding.temperature.text =
             resources.getString(R.string.celcium_27, currentWeatherForecast.weather.temp)
         binding.humidity.text =
             resources.getString(R.string.percent_73, currentWeatherForecast.weather.humidity)
     }
 
-    private fun setDailyForecastList(dailyForecastList: List<DailyForecast>) {
+    override fun setDailyForecastList(dailyForecastList: List<DailyForecast>) {
         whetherAdapter.bindWhetherList(dailyForecastList)
     }
 
-    private fun showMessageToast(message: String) {
+    override fun showMessageToast(message: String) {
         Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 
