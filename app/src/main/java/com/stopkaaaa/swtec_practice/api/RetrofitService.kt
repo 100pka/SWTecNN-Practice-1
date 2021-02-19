@@ -1,6 +1,5 @@
-package smart.sprinkler.app.api
+package com.stopkaaaa.swtec_practice.api
 
-import io.reactivex.rxjava3.core.Single
 import okhttp3.ResponseBody
 import retrofit2.Call
 import retrofit2.http.GET
@@ -14,7 +13,7 @@ private const val API_KEY = "4b7a044e1a4df3a657a78c9725be33ac"
 interface RetrofitService {
 
     @GET("data/2.5/onecall")
-    fun getWeatherForecast(
+    suspend fun getWeatherForecast(
         @Query("lat") latitude: Double = 56.302947,
         @Query("lon") longitude: Double = 44.021527,
         @Query("exclude") exclude: String = arrayOf(
@@ -25,16 +24,16 @@ interface RetrofitService {
         ).joinToString(separator = ","),
         @Query("units") units: String = "metric",
         @Query("appId") apiKey: String = API_KEY
-    ): Single<WeatherForecast>
+    ): WeatherForecast
 
     @GET("data/2.5/weather")
-    fun getCurrentWeatherForecast(
+    suspend fun getCurrentWeatherForecast(
         @Query("q") place: String = arrayOf(
             "Nizhniy Novgorod", "RUS"
         ).joinToString(separator = ","),
         @Query("appId") apiKey: String = API_KEY,
         @Query("units") units: String = "metric"
-    ): Single<CurrentWeatherForecast>
+    ): CurrentWeatherForecast
 
     @GET
     fun getWeatherImage(@Url imageUrl: String): Call<ResponseBody>

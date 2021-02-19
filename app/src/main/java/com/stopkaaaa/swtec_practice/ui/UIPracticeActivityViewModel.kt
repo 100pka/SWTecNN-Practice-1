@@ -4,59 +4,42 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
-import io.reactivex.rxjava3.disposables.CompositeDisposable
-import io.reactivex.rxjava3.observers.DisposableSingleObserver
-import io.reactivex.rxjava3.schedulers.Schedulers
-import smart.sprinkler.app.api.RetrofitClient
+import androidx.lifecycle.viewModelScope
+import com.stopkaaaa.swtec_practice.api.RetrofitClient
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
-import smart.sprinkler.app.api.model.WeatherForecast
 
 class UIPracticeActivityViewModel : ViewModel() {
 
     private val _mutableCurrentWeather = MutableLiveData<CurrentWeatherForecast>()
-    val currentWeather: LiveData<CurrentWeatherForecast> get() = _mutableCurrentWeather
+    val currentWeather: LiveData<CurrentWeatherForecast> = _mutableCurrentWeather
 
     private val _mutableDailyForecastList = MutableLiveData<List<DailyForecast>>()
-    val dailyForecastList: LiveData<List<DailyForecast>> get() = _mutableDailyForecastList
+    val dailyForecastList: LiveData<List<DailyForecast>> = _mutableDailyForecastList
 
-    private val compositeDisposable = CompositeDisposable()
+    private val _mutableCurrentWeatherLoadingState = MutableLiveData(CurrentWeatherLoadingState.LOADING)
+    val currentWeatherLoadingState: LiveData<CurrentWeatherLoadingState> = _mutableCurrentWeatherLoadingState
+
+    private val _mutableDailyWeatherLoadingState = MutableLiveData(DailyWeatherLoadingState.LOADING)
+    val dailyWeatherLoadingState: LiveData<DailyWeatherLoadingState> = _mutableDailyWeatherLoadingState
 
     init {
 
-        compositeDisposable.add(RetrofitClient.getCurrentWeather()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<CurrentWeatherForecast>() {
-                override fun onSuccess(t: CurrentWeatherForecast?) {
-                    _mutableCurrentWeather.value = t
-                }
+        viewModelScope.launch {
+            _mutableCurrentWeatherLoadingState.value = CurrentWeatherLoadingState.LOADING
+            _mutableDailyWeatherLoadingState.value = DailyWeatherLoadingState.LOADING
 
-                override fun onError(e: Throwable?) {
-                    Log.d("ViewModel: ", "Something went wrong")
-                }
+            val current = RetrofitClient.getCurrentWeather()
 
-            }))
+            val daily = RetrofitClient.getWeatherForecast().daily
 
-        compositeDisposable.add(RetrofitClient.getWeatherForecast()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribeWith(object : DisposableSingleObserver<WeatherForecast>() {
-            override fun onSuccess(t: WeatherForecast?) {
-               _mutableDailyForecastList.value = t?.daily?.subList(0, 5)
-            }
+            _mutableCurrentWeather.value = current
+            _mutableDailyForecastList.value = daily.subList(0, 5)
 
-            override fun onError(e: Throwable?) {
-                Log.d("ViewModel: ", "Something went wrong")
-            }
-
-        }))
-
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        compositeDisposable.clear()
+            _mutableCurrentWeatherLoadingState.value = CurrentWeatherLoadingState.DONE
+            _mutableDailyWeatherLoadingState.value = DailyWeatherLoadingState.DONE
+        }
     }
 }

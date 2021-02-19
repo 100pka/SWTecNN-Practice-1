@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.activity.viewModels
+import androidx.core.view.isInvisible
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
@@ -54,6 +56,8 @@ class UIPracticeActivity : AppCompatActivity() {
 
         viewModel.currentWeather.observe(this, this::setCurrentWeather)
         viewModel.dailyForecastList.observe(this, this::setDailyForecastList)
+        viewModel.currentWeatherLoadingState.observe(this, this::setLoadingCurrentWeather)
+        viewModel.dailyWeatherLoadingState.observe(this, this::setLoadingDailyWeather)
 
         Log.d("MainActivity: ", "OnCreate" )
     }
@@ -99,5 +103,35 @@ class UIPracticeActivity : AppCompatActivity() {
 
     private fun setDailyForecastList(dailyForecastList: List<DailyForecast>) {
         whetherAdapter.bindWhetherList(dailyForecastList)
+    }
+
+    private fun setLoadingCurrentWeather(currentWeatherLoadingState: CurrentWeatherLoadingState) {
+        when (currentWeatherLoadingState) {
+            CurrentWeatherLoadingState.LOADING -> {
+                binding.temperature.isInvisible = true
+                binding.humidity.isInvisible = true
+                binding.temperatureProgress.isVisible = true
+                binding.humidityProgress.isVisible = true
+            }
+            CurrentWeatherLoadingState.DONE -> {
+                binding.temperature.isInvisible = false
+                binding.humidity.isInvisible = false
+                binding.temperatureProgress.isVisible = false
+                binding.humidityProgress.isVisible = false
+            }
+        }
+    }
+
+    private fun setLoadingDailyWeather(dailyWeatherLoadingState: DailyWeatherLoadingState) {
+        when (dailyWeatherLoadingState) {
+            DailyWeatherLoadingState.LOADING -> {
+                binding.weatherRv.isInvisible = true
+                binding.weatherRvProgress.isVisible = true
+            }
+            DailyWeatherLoadingState.DONE -> {
+                binding.weatherRv.isInvisible = false
+                binding.weatherRvProgress.isVisible = false
+            }
+        }
     }
 }

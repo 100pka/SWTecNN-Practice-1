@@ -1,12 +1,12 @@
-package smart.sprinkler.app.api
+package com.stopkaaaa.swtec_practice.api
 
-import io.reactivex.rxjava3.core.Single
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
 import retrofit2.Retrofit
-import retrofit2.adapter.rxjava3.RxJava3CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.WeatherForecast
@@ -28,16 +28,15 @@ object RetrofitClient {
             .baseUrl(baseUrl)
             .client(client)
             .addConverterFactory(GsonConverterFactory.create())
-            .addCallAdapterFactory(RxJava3CallAdapterFactory.create())
             .build()
     }
 
-    fun getWeatherForecast(): Single<WeatherForecast> {
-        return api.getWeatherForecast()
+    suspend fun getWeatherForecast(): WeatherForecast = withContext(Dispatchers.IO) {
+        api.getWeatherForecast()
     }
 
-    fun getCurrentWeather(): Single<CurrentWeatherForecast> {
-        return api.getCurrentWeatherForecast()
+    suspend fun getCurrentWeather(): CurrentWeatherForecast = withContext(Dispatchers.IO) {
+        api.getCurrentWeatherForecast()
     }
 
     fun getImage(imageCode: String): Call<ResponseBody> {
