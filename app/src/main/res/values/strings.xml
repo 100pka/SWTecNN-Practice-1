@@ -3,8 +3,8 @@
     <string name="date_07_02_2020">February 7, 2020</string>
     <string name="temp">Temp</string>
     <string name="humidity">Humidity</string>
-    <string name="percent_73">73%</string>
-    <string name="celcium_27">27°</string>
+    <string name="percent_73">%d%%</string>
+    <string name="celcium_27">%.1f°</string>
     <string name="sprinkle_for_tomorrow">Sprinkle for tomorrow</string>
     <string name="sprinkling_now">Sprinkling now</string>
     <string name="water_sprinkler_reset">Water sprinkler reset</string>

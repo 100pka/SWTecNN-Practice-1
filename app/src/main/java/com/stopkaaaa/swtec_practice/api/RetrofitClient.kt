@@ -1,5 +1,7 @@
-package smart.sprinkler.app.api
+package com.stopkaaaa.swtec_practice.api
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import okhttp3.ResponseBody
 import okhttp3.logging.HttpLoggingInterceptor
@@ -29,12 +31,12 @@ object RetrofitClient {
             .build()
     }
 
-    fun getWeatherForecast(): Call<WeatherForecast> {
-        return api.getWeatherForecast()
+    suspend fun getWeatherForecast(): WeatherForecast = withContext(Dispatchers.IO) {
+        api.getWeatherForecast()
     }
 
-    fun getCurrentWeather(): Call<CurrentWeatherForecast> {
-        return api.getCurrentWeatherForecast()
+    suspend fun getCurrentWeather(): CurrentWeatherForecast = withContext(Dispatchers.IO) {
+        api.getCurrentWeatherForecast()
     }
 
     fun getImage(imageCode: String): Call<ResponseBody> {
