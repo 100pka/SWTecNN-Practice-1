@@ -4,7 +4,6 @@ import android.annotation.SuppressLint
 import android.content.res.Configuration
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stopkaaaa.swtec_practice.R
@@ -12,19 +11,12 @@ import com.stopkaaaa.swtec_practice.adapters.LocationAdapter
 import com.stopkaaaa.swtec_practice.adapters.WhetherAdapter
 import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
+import com.stopkaaaa.swtec_practice.threadpool.GetDailyForecastCallable
 import com.stopkaaaa.swtec_practice.threadpool.GetForecastDataCallable
 import com.stopkaaaa.swtec_practice.threadpool.ThreadPoolManager
 import com.stopkaaaa.swtec_practice.threadpool.UiThreadCallback
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import smart.sprinkler.app.api.RetrofitClient
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
-import smart.sprinkler.app.api.model.WeatherForecast
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 
 class UIPracticeActivity : AppCompatActivity(), UiThreadCallback {
 
@@ -62,14 +54,34 @@ class UIPracticeActivity : AppCompatActivity(), UiThreadCallback {
             }
         }
 
-        val callable = GetForecastDataCallable()
-        callable.setThreadPoolManager(ThreadPoolManager)
-        ThreadPoolManager.setBindResultCallback(this)
-        ThreadPoolManager.addCallable(callable)
+        if (savedInstanceState == null) {
+            val currentForecastCallable = GetForecastDataCallable()
+            val dailyForecastCallable = GetDailyForecastCallable()
+
+            currentForecastCallable.setThreadPoolManager(ThreadPoolManager)
+            dailyForecastCallable.setThreadPoolManager(ThreadPoolManager)
+
+            ThreadPoolManager.setBindResultCallback(this)
+            ThreadPoolManager.addCallable(currentForecastCallable)
+            ThreadPoolManager.addCallable(dailyForecastCallable)
+        } else {
+            ThreadPoolManager.setBindResultCallback(this)
+            ThreadPoolManager.activityReCreated()
+        }
+
 
         Log.d("MainActivity: ", "OnCreate")
     }
 
+    override fun onPause() {
+        super.onPause()
+        ThreadPoolManager.executorService.pause()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        ThreadPoolManager.executorService.resume()
+    }
 
     private fun getLocationsList(): List<Location> {
         return listOf(
@@ -113,11 +125,11 @@ class UIPracticeActivity : AppCompatActivity(), UiThreadCallback {
         whetherAdapter.bindWhetherList(dailyForecastList)
     }
 
-    private fun showMessageToast(message: String) {
-        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
+    override fun bindCurrentWeatherToUi(currentWeather: CurrentWeatherForecast) {
+        setCurrentWeather(currentWeather)
     }
 
-    override fun bindResult(currentWeather: CurrentWeatherForecast) {
-        setCurrentWeather(currentWeather)
+    override fun bindDailyWeatherToUi(dailyWeather: List<DailyForecast>) {
+        setDailyForecastList(dailyWeather)
     }
 }

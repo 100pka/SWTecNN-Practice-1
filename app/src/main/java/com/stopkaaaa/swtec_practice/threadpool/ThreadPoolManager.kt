@@ -1,7 +1,7 @@
 package com.stopkaaaa.swtec_practice.threadpool
 
-import smart.sprinkler.app.api.model.CurrentWeather
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
+import smart.sprinkler.app.api.model.DailyForecast
 import java.lang.ref.WeakReference
 import java.util.concurrent.*
 
@@ -13,14 +13,17 @@ object ThreadPoolManager {
     private const val KEEP_ALIVE_TIME = 1L
     private val KEEP_ALIVE_TIME_UNIT = TimeUnit.SECONDS
 
-    private lateinit var  executorService: ExecutorService
+    lateinit var  executorService: PausableExecutor
     private val taskQueue: BlockingQueue<Runnable> = LinkedBlockingQueue()
     private val runningTaskList: MutableList<Future<Unit>> = mutableListOf()
 
     private var callback: WeakReference<UiThreadCallback>? = null
 
+    var currentWeatherCash: CurrentWeatherForecast? = null
+    val dailyWeatherCash = mutableListOf<DailyForecast>()
+
     init {
-        executorService = ThreadPoolExecutor(NUMBER_OF_CORES, NUMBER_OF_CORES*2, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, taskQueue)
+        executorService = PausableExecutor(NUMBER_OF_CORES, NUMBER_OF_CORES*2, KEEP_ALIVE_TIME, KEEP_ALIVE_TIME_UNIT, taskQueue)
     }
 
     fun addCallable(callable: Callable<Unit>){
@@ -44,9 +47,29 @@ object ThreadPoolManager {
         this.callback = WeakReference<UiThreadCallback>(callback)
     }
 
-    fun postResultToUi(currentWeather: CurrentWeatherForecast){
+    fun postCurrentWeatherToUi(currentWeather: CurrentWeatherForecast){
         if(callback != null && callback?.get() != null) {
-            callback?.get()?.bindResult(currentWeather)
+            currentWeatherCash = currentWeather
+            callback?.get()?.bindCurrentWeatherToUi(currentWeather)
+        }
+    }
+
+    fun postDailyWeatherToUi(dailyWeather: List<DailyForecast>){
+        if(callback != null && callback?.get() != null) {
+            dailyWeatherCash.clear()
+            dailyWeatherCash.addAll(dailyWeather)
+            callback?.get()?.bindDailyWeatherToUi(dailyWeather)
+        }
+    }
+
+    fun activityReCreated() {
+        if(callback != null && callback?.get() != null) {
+            if (dailyWeatherCash.isNotEmpty()) {
+                callback?.get()?.bindDailyWeatherToUi(dailyWeatherCash)
+            }
+            if (currentWeatherCash != null) {
+                callback?.get()?.bindCurrentWeatherToUi(currentWeatherCash!!)
+            }
         }
     }
 }
