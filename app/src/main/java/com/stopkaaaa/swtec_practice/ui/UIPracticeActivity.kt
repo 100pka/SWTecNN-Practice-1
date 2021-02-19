@@ -26,7 +26,6 @@ class UIPracticeActivity : AppCompatActivity() {
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
 
-
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,6 +61,12 @@ class UIPracticeActivity : AppCompatActivity() {
         Log.d("MainActivity: ", "OnCreate")
     }
 
+
+    override fun onPause() {
+        super.onPause()
+        CurrentWeatherForecastAsync(this).cancel(true)
+        DailyWeatherForecastAsync(this).cancel(true)
+    }
 
     private fun getLocationsList(): List<Location> {
         return listOf(
