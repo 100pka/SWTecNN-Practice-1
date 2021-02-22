@@ -1,13 +1,18 @@
 package com.stopkaaaa.swtec_practice.adapters
 
 import android.annotation.SuppressLint
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.view.marginStart
 import androidx.recyclerview.widget.RecyclerView
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.data.Location
-import com.stopkaaaa.swtec_practice.databinding.LocationItemBinding
-import java.lang.StringBuilder
+import com.stopkaaaa.swtec_practice.databinding.LocationCustomItemBinding
+import com.stopkaaaa.swtec_practice.ui.custom_item.CustomItemState
+import com.stopkaaaa.swtec_practice.ui.custom_item.OnSwipe
+import com.stopkaaaa.swtec_practice.ui.custom_item.OnSwipeTouchListener
 
 class LocationAdapter() : RecyclerView.Adapter<LocationViewHolder>() {
 
@@ -20,16 +25,19 @@ class LocationAdapter() : RecyclerView.Adapter<LocationViewHolder>() {
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LocationViewHolder {
-        val binding = LocationItemBinding
+        val binding = LocationCustomItemBinding
             .inflate(LayoutInflater.from(parent.context), parent, false)
         val holder = LocationViewHolder(binding)
 
         holder.itemView.apply {
             layoutParams.height = ((locationsRecyclerView.measuredHeight -
                     parent.context.resources.displayMetrics.density * parent.context.resources.getDimension(
-                R.dimen.margin_12)) / 5).toInt()
+                R.dimen.margin_12
+            )) / 5).toInt()
+            layoutParams.width = locationsRecyclerView.measuredWidth * 3
             isFocusable = true
         }
+        binding.item.x = - (holder.itemView.layoutParams.width / 3).toFloat()
         return holder
     }
 
@@ -48,62 +56,96 @@ class LocationAdapter() : RecyclerView.Adapter<LocationViewHolder>() {
     }
 }
 
-class LocationViewHolder(private val binding: LocationItemBinding) :
+class LocationViewHolder(private val binding: LocationCustomItemBinding) :
     RecyclerView.ViewHolder(binding.root) {
     @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
     fun onBind(location: Location) {
-        val itemDescription = StringBuilder()
-        location.title.let{
-            binding.location.text = it
-            itemDescription.append(it).append(" ")
-        }
+        binding.item.setLocationTitle(location.title)
+        binding.item.setCurrentSprinklingLocation(location.isSprinklingNow)
+        binding.item.setFutureSprinklingLocation(location.isChosenToSprinkle)
 
-        location.isSprinklingNow.let{
-            binding.currentSprinkleCheckBox.isChecked = it
-            if (it) {
-                itemDescription.append("sprinkling now").append(" ")
-            }
-            else {
-                itemDescription.append("doesn't sprinkling now").append(" ")
-            }
-        }
 
-        location.isChosenToSparkle.let{
-            binding.setSprinkleCheckBox.isChecked = it
-            if (it) {
-                itemDescription.append("and planned for tomorrow")
-            }
-            else {
-                itemDescription.append("and didn't planned for tomorrow")
-            }
-        }
 
-        updateItemContentDescription(itemDescription.toString())
+//        val itemDescription = StringBuilder()
+//        location.title.let{
+//            binding.location.text = it
+//            itemDescription.append(it).append(" ")
+//        }
+//
+//        location.isSprinklingNow.let{
+//            binding.currentSprinkleCheckBox.isChecked = it
+//            if (it) {
+//                itemDescription.append("sprinkling now").append(" ")
+//            }
+//            else {
+//                itemDescription.append("doesn't sprinkling now").append(" ")
+//            }
+//        }
+//
+//        location.isChosenToSparkle.let{
+//            binding.setSprinkleCheckBox.isChecked = it
+//            if (it) {
+//                itemDescription.append("and planned for tomorrow")
+//            }
+//            else {
+//                itemDescription.append("and didn't planned for tomorrow")
+//            }
+//        }
+//
+//        updateItemContentDescription(itemDescription.toString())
+//
+//        binding.setSprinkleCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+//            val itemDescription = StringBuilder()
+//            itemDescription.append(binding.location.text)
+//
+//            if (binding.currentSprinkleCheckBox.isChecked) {
+//                itemDescription.append("sprinkling now").append(" ")
+//            }
+//            else {
+//                itemDescription.append("doesn't sprinkling now").append(" ")
+//            }
+//
+//            if (isChecked) {
+//                itemDescription.append("and planned for tomorrow")
+//            }
+//            else {
+//                itemDescription.append("and didn't planned for tomorrow")
+//            }
+//
+//            updateItemContentDescription(itemDescription.toString())
+//        }
 
-        binding.setSprinkleCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-            val itemDescription = StringBuilder()
-            itemDescription.append(binding.location.text)
 
-            if (binding.currentSprinkleCheckBox.isChecked) {
-                itemDescription.append("sprinkling now").append(" ")
-            }
-            else {
-                itemDescription.append("doesn't sprinkling now").append(" ")
-            }
-
-            if (isChecked) {
-                itemDescription.append("and planned for tomorrow")
-            }
-            else {
-                itemDescription.append("and didn't planned for tomorrow")
+        binding.item.setOnTouchListener(OnSwipeTouchListener(binding.root.context, object :
+            OnSwipe {
+            override fun onSwipeLeft() {
+                Toast.makeText(binding.root.context, "Left", Toast.LENGTH_SHORT).show()
+                when (binding.item.currentItemState) {
+                    CustomItemState.DEFAULT -> {
+                        binding.item.setState(CustomItemState.DELETE)
+                    }
+                    CustomItemState.EDIT -> {
+                        binding.item.setState(CustomItemState.DEFAULT)
+                    }
+                }
             }
 
-            updateItemContentDescription(itemDescription.toString())
-        }
+            override fun onSwipeRight() {
+                Toast.makeText(binding.root.context, "Right", Toast.LENGTH_SHORT).show()
+                when (binding.item.currentItemState) {
+                    CustomItemState.DEFAULT -> {
+                        binding.item.setState(CustomItemState.EDIT)
+                    }
+                    CustomItemState.DELETE -> {
+                        binding.item.setState(CustomItemState.DEFAULT)
+                    }
+                }
+            }
+        }))
     }
 
-    private fun updateItemContentDescription(itemDescription: String) {
-        binding.location.contentDescription = itemDescription
-    }
+//    private fun updateItemContentDescription(itemDescription: String) {
+//        binding.location.contentDescription = itemDescription
+//    }
 
 }

@@ -17,6 +17,8 @@ import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.data.Weather
 import com.stopkaaaa.swtec_practice.data.WeatherState
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
+import com.stopkaaaa.swtec_practice.ui.custom_item.OnSwipe
+import com.stopkaaaa.swtec_practice.ui.custom_item.OnSwipeTouchListener
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
 
@@ -54,6 +56,23 @@ class UIPracticeActivity : AppCompatActivity() {
                 binding.sprinklerIcon.setImageDrawable(getDrawable(R.drawable.sprinkler_off))
             }
         }
+
+        binding.myCustomView.setOnTouchListener(
+            OnSwipeTouchListener(
+                this@UIPracticeActivity,
+                object : OnSwipe {
+                    override fun onSwipeLeft() {
+                        Toast.makeText(this@UIPracticeActivity, "Left", Toast.LENGTH_SHORT).show()
+                        binding.myCustomView.showRightRect()
+                    }
+
+                    override fun onSwipeRight() {
+                        Toast.makeText(this@UIPracticeActivity, "Right", Toast.LENGTH_SHORT).show()
+                        binding.myCustomView.showLeftRect()
+                    }
+
+                })
+        )
 
         viewModel.currentWeather.observe(this, this::setCurrentWeather)
         viewModel.dailyForecastList.observe(this, this::setDailyForecastList)

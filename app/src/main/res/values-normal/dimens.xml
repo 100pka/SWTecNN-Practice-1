@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="margin_12">6dp</dimen>
-    <dimen name="margin_24">12dp</dimen>
+    <dimen name="margin_12">8dp</dimen>
+    <dimen name="margin_24">16dp</dimen>
 
     <dimen name="sprinkler_size">180dp</dimen>
     <dimen name="water_icon_size">100dp</dimen>

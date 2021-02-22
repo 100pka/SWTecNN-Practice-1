@@ -6,4 +6,7 @@
         <attr name="count_text_color" format="reference|color" />
     </declare-styleable>
 
+    <declare-styleable name="CustomItem">
+        <attr name="location_title" format="string"/>
+    </declare-styleable>
 </resources>
