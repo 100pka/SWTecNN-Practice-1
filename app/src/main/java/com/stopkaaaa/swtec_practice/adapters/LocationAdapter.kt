@@ -14,7 +14,7 @@ import com.stopkaaaa.swtec_practice.ui.custom_item.CustomItemState
 import com.stopkaaaa.swtec_practice.ui.custom_item.OnSwipe
 import com.stopkaaaa.swtec_practice.ui.custom_item.OnSwipeTouchListener
 
-class LocationAdapter() : RecyclerView.Adapter<LocationViewHolder>() {
+class LocationAdapter() : RecyclerView.Adapter<LocationAdapter.LocationViewHolder>() {
 
     private val locationsList: MutableList<Location> = mutableListOf()
     lateinit var locationsRecyclerView: RecyclerView
@@ -54,98 +54,46 @@ class LocationAdapter() : RecyclerView.Adapter<LocationViewHolder>() {
         locationsList.addAll(newLocationsList)
         notifyDataSetChanged()
     }
-}
 
-class LocationViewHolder(private val binding: LocationCustomItemBinding) :
-    RecyclerView.ViewHolder(binding.root) {
-    @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
-    fun onBind(location: Location) {
-        binding.item.setLocationTitle(location.title)
-        binding.item.setCurrentSprinklingLocation(location.isSprinklingNow)
-        binding.item.setFutureSprinklingLocation(location.isChosenToSprinkle)
-
-
-
-//        val itemDescription = StringBuilder()
-//        location.title.let{
-//            binding.location.text = it
-//            itemDescription.append(it).append(" ")
-//        }
-//
-//        location.isSprinklingNow.let{
-//            binding.currentSprinkleCheckBox.isChecked = it
-//            if (it) {
-//                itemDescription.append("sprinkling now").append(" ")
-//            }
-//            else {
-//                itemDescription.append("doesn't sprinkling now").append(" ")
-//            }
-//        }
-//
-//        location.isChosenToSparkle.let{
-//            binding.setSprinkleCheckBox.isChecked = it
-//            if (it) {
-//                itemDescription.append("and planned for tomorrow")
-//            }
-//            else {
-//                itemDescription.append("and didn't planned for tomorrow")
-//            }
-//        }
-//
-//        updateItemContentDescription(itemDescription.toString())
-//
-//        binding.setSprinkleCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
-//            val itemDescription = StringBuilder()
-//            itemDescription.append(binding.location.text)
-//
-//            if (binding.currentSprinkleCheckBox.isChecked) {
-//                itemDescription.append("sprinkling now").append(" ")
-//            }
-//            else {
-//                itemDescription.append("doesn't sprinkling now").append(" ")
-//            }
-//
-//            if (isChecked) {
-//                itemDescription.append("and planned for tomorrow")
-//            }
-//            else {
-//                itemDescription.append("and didn't planned for tomorrow")
-//            }
-//
-//            updateItemContentDescription(itemDescription.toString())
-//        }
-
-
-        binding.item.setOnTouchListener(OnSwipeTouchListener(binding.root.context, object :
-            OnSwipe {
-            override fun onSwipeLeft() {
-                Toast.makeText(binding.root.context, "Left", Toast.LENGTH_SHORT).show()
-                when (binding.item.currentItemState) {
-                    CustomItemState.DEFAULT -> {
-                        binding.item.setState(CustomItemState.DELETE)
-                    }
-                    CustomItemState.EDIT -> {
-                        binding.item.setState(CustomItemState.DEFAULT)
+    inner class LocationViewHolder(private val binding: LocationCustomItemBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
+        fun onBind(location: Location) {
+            binding.item.setLocationTitle(location.title)
+            binding.item.setCurrentSprinklingLocation(location.isSprinklingNow)
+            binding.item.setFutureSprinklingLocation(location.isChosenToSprinkle)
+            binding.item.setOnTouchListener(OnSwipeTouchListener(binding.root.context, object :
+                OnSwipe {
+                override fun onSwipeLeft() {
+                    when (binding.item.currentItemState) {
+                        CustomItemState.DEFAULT -> {
+                            binding.item.setState(CustomItemState.DELETE)
+                        }
+                        CustomItemState.EDIT -> {
+                            binding.item.setState(CustomItemState.DEFAULT)
+                        }
+                        else -> {}
                     }
                 }
-            }
-
-            override fun onSwipeRight() {
-                Toast.makeText(binding.root.context, "Right", Toast.LENGTH_SHORT).show()
-                when (binding.item.currentItemState) {
-                    CustomItemState.DEFAULT -> {
-                        binding.item.setState(CustomItemState.EDIT)
-                    }
-                    CustomItemState.DELETE -> {
-                        binding.item.setState(CustomItemState.DEFAULT)
+                override fun onSwipeRight() {
+                    when (binding.item.currentItemState) {
+                        CustomItemState.DEFAULT -> {
+                            binding.item.setState(CustomItemState.EDIT)
+                        }
+                        CustomItemState.DELETE -> {
+                            binding.item.setState(CustomItemState.DEFAULT)
+                        }
+                        else -> {}
                     }
                 }
+            }))
+
+            binding.item.setDeleteClickListener {
+                locationsList.remove(location)
+                notifyDataSetChanged()
+                binding.item.x = - (locationsRecyclerView.measuredWidth ).toFloat()
             }
-        }))
+        }
     }
-
-//    private fun updateItemContentDescription(itemDescription: String) {
-//        binding.location.contentDescription = itemDescription
-//    }
-
 }
+

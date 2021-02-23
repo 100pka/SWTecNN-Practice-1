@@ -9,8 +9,8 @@ import kotlin.math.abs
 open class OnSwipeTouchListener(context: Context, val onSwipeCallbacks: OnSwipe) : View.OnTouchListener {
 
     companion object {
-        const val SWIPE_DISCTANCE_TRESHOLD = 100
-        const val SWIPE_VELOCITY_THRESHOLD = 100
+        const val SWIPE_DISCTANCE_TRESHOLD = 50
+        const val SWIPE_VELOCITY_THRESHOLD = 50
     }
 
     private val gestureDetector: GestureDetector

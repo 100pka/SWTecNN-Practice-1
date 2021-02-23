@@ -8,7 +8,9 @@ import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.Gravity
 import android.view.LayoutInflater
+import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
 import com.stopkaaaa.swtec_practice.R
@@ -74,9 +76,7 @@ class CustomItem @JvmOverloads constructor(
                 }
             }
         }
-
     }
-
 
     fun setState(itemState: CustomItemState) {
         when (currentItemState) {
@@ -94,6 +94,7 @@ class CustomItem @JvmOverloads constructor(
             CustomItemState.EDIT -> {
                 when (itemState) {
                     CustomItemState.DEFAULT -> {
+                        binding.location.text = binding.editText.text.toString()
                         animateSwipeLeft(false)
                     }
                     else -> {}
@@ -111,8 +112,13 @@ class CustomItem @JvmOverloads constructor(
         currentItemState = itemState
     }
 
+    fun setDeleteClickListener(listener: ((View) -> Unit)?) {
+        binding.deleteBtn.setOnClickListener (listener)
+    }
+
     fun setLocationTitle(title: String) {
         binding.location.text = title
+        binding.editText.text.replace(0, binding.editText.text.length, title)
     }
 
     fun setCurrentSprinklingLocation (isSprinklingNow: Boolean) {
@@ -126,26 +132,4 @@ class CustomItem @JvmOverloads constructor(
     override fun performClick(): Boolean {
         return super.performClick()
     }
-
-    //    fun showLeftRect() {
-//        val animator = ValueAnimator.ofInt(0, width)
-//        animator.duration = 1000
-//        animator.interpolator = DecelerateInterpolator()
-//        animator.addUpdateListener { animation ->
-//            val rectWidth = animation.animatedValue as Int
-//            setLeftRectSize(rectWidth)
-//        }
-//        animator.start()
-//    }
-//
-//    fun showRightRect() {
-//        val animator = ValueAnimator.ofInt(width, 0)
-//        animator.duration = 1000
-//        animator.interpolator = DecelerateInterpolator()
-//        animator.addUpdateListener { animation ->
-//            val rectWidth = animation.animatedValue as Int
-//            setRightRectSize(rectWidth)
-//        }
-//        animator.start()
-//    }
 }

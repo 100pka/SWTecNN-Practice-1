@@ -47,7 +47,11 @@ class WhetherViewHolder(private val binding: WeatherItemBinding) :
     @SuppressLint("UseCompatLoadingForDrawables", "SetTextI18n")
     fun onBind(weather: DailyForecast) {
         binding.date.text = weather.getDate()
-        binding.temperature.text = (weather.temp.day).roundToInt().toString() + "\u00B0"
+        if (weather.temp.day > 0) {
+            binding.temperature.text = "+" + (weather.temp.day).roundToInt().toString() + "\u00B0"
+        } else {
+            binding.temperature.text = (weather.temp.day).roundToInt().toString() + "\u00B0"
+        }
 
         Glide.with(binding.root.context)
             .load(weather.weatherImage[0].getIconUrl())

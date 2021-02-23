@@ -11,16 +11,17 @@
         app:layout_constraintEnd_toStartOf="@+id/default_state"
         android:background="@android:color/holo_green_dark">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/edit_btn"
+        <EditText
+            android:id="@+id/edit_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             app:layout_constraintStart_toStartOf="@+id/edit_state"
             app:layout_constraintEnd_toEndOf="@+id/edit_state"
             app:layout_constraintTop_toTopOf="@+id/edit_state"
             app:layout_constraintBottom_toBottomOf="@+id/edit_state"
-            android:hint="Edit"
-            android:textSize="@dimen/small_text_size"/>
+            tools:hint="Edit name..."
+            android:textSize="@dimen/small_text_size"
+            android:backgroundTint="@android:color/holo_green_light"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -85,7 +86,8 @@
             app:layout_constraintTop_toTopOf="@+id/delete_state"
             app:layout_constraintBottom_toBottomOf="@+id/delete_state"
             android:hint="Delete"
-            android:textSize="@dimen/small_text_size"/>
+            android:textSize="@dimen/small_text_size"
+            android:backgroundTint="@android:color/holo_red_dark"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
