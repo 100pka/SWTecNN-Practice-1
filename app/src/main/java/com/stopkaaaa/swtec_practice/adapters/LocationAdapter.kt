@@ -91,7 +91,7 @@ class LocationAdapter() : RecyclerView.Adapter<LocationAdapter.LocationViewHolde
             binding.item.setDeleteClickListener {
                 locationsList.remove(location)
                 notifyDataSetChanged()
-                binding.item.x = - (locationsRecyclerView.measuredWidth ).toFloat()
+                binding.item.setState(CustomItemState.DEFAULT)
             }
         }
     }

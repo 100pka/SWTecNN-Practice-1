@@ -3,27 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/edit_state"
-        android:layout_width="0dp"
-        android:layout_height="match_parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/default_state"
-        android:background="@android:color/holo_green_dark">
-
-        <EditText
-            android:id="@+id/edit_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="@+id/edit_state"
-            app:layout_constraintEnd_toEndOf="@+id/edit_state"
-            app:layout_constraintTop_toTopOf="@+id/edit_state"
-            app:layout_constraintBottom_toBottomOf="@+id/edit_state"
-            tools:hint="Edit name..."
-            android:textSize="@dimen/small_text_size"
-            android:backgroundTint="@android:color/holo_green_light"/>
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -66,6 +45,28 @@
             android:button="@null"
             android:clickable="false"
             />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/edit_state"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/default_state"
+        android:background="@android:color/holo_green_dark">
+
+        <EditText
+            android:id="@+id/edit_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="@+id/edit_state"
+            app:layout_constraintEnd_toEndOf="@+id/edit_state"
+            app:layout_constraintTop_toTopOf="@+id/edit_state"
+            app:layout_constraintBottom_toBottomOf="@+id/edit_state"
+            tools:hint="Edit name..."
+            android:textSize="@dimen/small_text_size"
+            android:backgroundTint="@android:color/holo_green_light"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

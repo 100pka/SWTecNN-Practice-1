@@ -2,6 +2,7 @@ package com.stopkaaaa.swtec_practice.ui.custom_item
 
 import android.animation.ObjectAnimator
 import android.animation.ValueAnimator
+import android.app.Activity
 import android.content.Context
 import android.graphics.Color
 import android.graphics.Paint
@@ -10,9 +11,11 @@ import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.animation.DecelerateInterpolator
+import android.view.inputmethod.InputMethodManager
 import android.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.constraintlayout.widget.ConstraintSet
+import androidx.core.content.ContextCompat.getSystemService
 import com.stopkaaaa.swtec_practice.R
 import com.stopkaaaa.swtec_practice.databinding.CustomItemBinding
 
@@ -47,35 +50,64 @@ class CustomItem @JvmOverloads constructor(
     private fun animateSwipeLeft (fromDefault: Boolean) {
         when (fromDefault) {
             true -> {
-                ObjectAnimator.ofFloat(this, "translationX", -(2 * width / 3).toFloat()).apply{
+                ObjectAnimator.ofFloat(binding.deleteState, "translationX", -(width / 3).toFloat()).apply{
                     duration = 1000
                     start()
                 }
             }
             false -> {
-                ObjectAnimator.ofFloat(this, "translationX", -(width/3).toFloat()).apply{
+                ObjectAnimator.ofFloat(binding.editState, "translationX", -(width / 3).toFloat()).apply{
                     duration = 1000
                     start()
                 }
             }
         }
+//        when (fromDefault) {
+//            true -> {
+//                ObjectAnimator.ofFloat(this, "translationX", -(2 * width / 3).toFloat()).apply{
+//                    duration = 1000
+//                    start()
+//                }
+//            }
+//            false -> {
+//                ObjectAnimator.ofFloat(this, "translationX", -(width/3).toFloat()).apply{
+//                    duration = 1000
+//                    start()
+//                }
+//            }
+//        }
     }
 
     private fun animateSwipeRight (fromDefault: Boolean) {
         when (fromDefault) {
             true -> {
-                ObjectAnimator.ofFloat(this, "translationX", 0f).apply{
+                ObjectAnimator.ofFloat(binding.editState, "translationX", (width/3).toFloat()).apply{
                     duration = 1000
                     start()
                 }
             }
             false -> {
-                ObjectAnimator.ofFloat(this, "translationX", -(width/3).toFloat()).apply{
+                ObjectAnimator.ofFloat(binding.deleteState, "translationX", (width/3).toFloat()).apply{
                     duration = 1000
                     start()
                 }
             }
         }
+//
+//        when (fromDefault) {
+//            true -> {
+//                ObjectAnimator.ofFloat(this, "translationX", 0f).apply{
+//                    duration = 1000
+//                    start()
+//                }
+//            }
+//            false -> {
+//                ObjectAnimator.ofFloat(this, "translationX", -(width/3).toFloat()).apply{
+//                    duration = 1000
+//                    start()
+//                }
+//            }
+//        }
     }
 
     fun setState(itemState: CustomItemState) {
@@ -95,6 +127,10 @@ class CustomItem @JvmOverloads constructor(
                 when (itemState) {
                     CustomItemState.DEFAULT -> {
                         binding.location.text = binding.editText.text.toString()
+
+                        val inputMethodManager = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
+
                         animateSwipeLeft(false)
                     }
                     else -> {}
