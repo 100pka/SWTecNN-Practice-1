@@ -1,6 +1,7 @@
 package com.stopkaaaa.swtec_practice.adapters
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -61,6 +62,7 @@ class LocationViewHolder(private val binding: LocationItemBinding) :
         location.isSprinklingNow.let{
             binding.currentSprinkleCheckBox.isChecked = it
             if (it) {
+                binding.location.setTextColor(Color.BLUE)
                 itemDescription.append("sprinkling now").append(" ")
             }
             else {
