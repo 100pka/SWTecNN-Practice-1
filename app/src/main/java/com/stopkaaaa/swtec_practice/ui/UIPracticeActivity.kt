@@ -48,7 +48,7 @@ class UIPracticeActivity : AppCompatActivity() {
             binding.sprinklerCheckBox.performClick()
         }
 
-        binding.sprinklerCheckBox.setOnCheckedChangeListener { buttonView, isChecked ->
+        binding.sprinklerCheckBox.setOnCheckedChangeListener { _, isChecked ->
             resetSprinklerCheckboxes()
             if (isChecked) {
                 binding.sprinklerIcon.setImageDrawable(getDrawable(R.drawable.sprinkler_on))
@@ -57,37 +57,12 @@ class UIPracticeActivity : AppCompatActivity() {
             }
         }
 
-        binding.myCustomView.setOnTouchListener(
-            OnSwipeTouchListener(
-                this@UIPracticeActivity,
-                object : OnSwipe {
-                    override fun onSwipeLeft() {
-                        Toast.makeText(this@UIPracticeActivity, "Left", Toast.LENGTH_SHORT).show()
-                        binding.myCustomView.showRightRect()
-                    }
-
-                    override fun onSwipeRight() {
-                        Toast.makeText(this@UIPracticeActivity, "Right", Toast.LENGTH_SHORT).show()
-                        binding.myCustomView.showLeftRect()
-                    }
-
-                })
-        )
-
         viewModel.currentWeather.observe(this, this::setCurrentWeather)
         viewModel.dailyForecastList.observe(this, this::setDailyForecastList)
         viewModel.currentWeatherLoadingState.observe(this, this::setLoadingCurrentWeather)
         viewModel.dailyWeatherLoadingState.observe(this, this::setLoadingDailyWeather)
 
         Log.d("MainActivity: ", "OnCreate" )
-    }
-
-    private fun getWhetherList() : List<Weather> {
-        return listOf(
-            Weather("February 7, 2020", 23, WeatherState.RAIN),
-            Weather("February 8, 2020", 23, WeatherState.CLOUDY),
-            Weather("February 9, 2020", 25, WeatherState.PARTLY_CLOUDY)
-        )
     }
 
     private fun getLocationsList() : List<Location> {

@@ -40,74 +40,77 @@ class CustomItem @JvmOverloads constructor(
 
         binding = CustomItemBinding.inflate(LayoutInflater.from(context), this)
 
-        setWillNotDraw(false)
-
         typedArray.recycle()
 
         setLocationTitle(locationTitle)
+
+        setOnTouchListener(OnSwipeTouchListener(context, object :
+            OnSwipe {
+            override fun onSwipeLeft() {
+                when (currentItemState) {
+                    CustomItemState.DEFAULT -> {
+                        setState(CustomItemState.DELETE)
+                    }
+                    CustomItemState.EDIT -> {
+                        setState(CustomItemState.DEFAULT)
+                    }
+                    else -> {
+                    }
+                }
+            }
+
+            override fun onSwipeRight() {
+                when (currentItemState) {
+                    CustomItemState.DEFAULT -> {
+                        setState(CustomItemState.EDIT)
+                    }
+                    CustomItemState.DELETE -> {
+                        setState(CustomItemState.DEFAULT)
+                    }
+                    else -> {
+                    }
+                }
+            }
+        }))
+
     }
 
-    private fun animateSwipeLeft (fromDefault: Boolean) {
+    private fun animateSwipeLeft(fromDefault: Boolean) {
         when (fromDefault) {
             true -> {
-                ObjectAnimator.ofFloat(binding.deleteState, "translationX", -(width / 3).toFloat()).apply{
-                    duration = 1000
-                    start()
-                }
+                ObjectAnimator.ofFloat(binding.deleteState, "translationX", -(width / 3).toFloat())
+                    .apply {
+                        duration = 1000
+                        start()
+                    }
             }
             false -> {
-                ObjectAnimator.ofFloat(binding.editState, "translationX", -(width / 3).toFloat()).apply{
-                    duration = 1000
-                    start()
-                }
+                ObjectAnimator.ofFloat(binding.editState, "translationX", -(width / 3).toFloat())
+                    .apply {
+                        duration = 1000
+                        start()
+                    }
             }
         }
-//        when (fromDefault) {
-//            true -> {
-//                ObjectAnimator.ofFloat(this, "translationX", -(2 * width / 3).toFloat()).apply{
-//                    duration = 1000
-//                    start()
-//                }
-//            }
-//            false -> {
-//                ObjectAnimator.ofFloat(this, "translationX", -(width/3).toFloat()).apply{
-//                    duration = 1000
-//                    start()
-//                }
-//            }
-//        }
     }
 
-    private fun animateSwipeRight (fromDefault: Boolean) {
+    private fun animateSwipeRight(fromDefault: Boolean) {
         when (fromDefault) {
             true -> {
-                ObjectAnimator.ofFloat(binding.editState, "translationX", (width/3).toFloat()).apply{
-                    duration = 1000
-                    start()
-                }
+                ObjectAnimator.ofFloat(binding.editState, "translationX", (width / 3).toFloat())
+                    .apply {
+                        duration = 1000
+                        start()
+                    }
             }
             false -> {
-                ObjectAnimator.ofFloat(binding.deleteState, "translationX", (width/3).toFloat()).apply{
-                    duration = 1000
-                    start()
-                }
+                ObjectAnimator.ofFloat(binding.deleteState, "translationX", (width / 3).toFloat())
+                    .apply {
+                        duration = 1000
+                        start()
+                    }
             }
         }
-//
-//        when (fromDefault) {
-//            true -> {
-//                ObjectAnimator.ofFloat(this, "translationX", 0f).apply{
-//                    duration = 1000
-//                    start()
-//                }
-//            }
-//            false -> {
-//                ObjectAnimator.ofFloat(this, "translationX", -(width/3).toFloat()).apply{
-//                    duration = 1000
-//                    start()
-//                }
-//            }
-//        }
     }
 
     fun setState(itemState: CustomItemState) {
@@ -120,7 +123,8 @@ class CustomItem @JvmOverloads constructor(
                     CustomItemState.DELETE -> {
                         animateSwipeLeft(true)
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
             CustomItemState.EDIT -> {
@@ -128,12 +132,14 @@ class CustomItem @JvmOverloads constructor(
                     CustomItemState.DEFAULT -> {
                         binding.location.text = binding.editText.text.toString()
 
-                        val inputMethodManager = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                        val inputMethodManager =
+                            binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                         inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
 
                         animateSwipeLeft(false)
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
             CustomItemState.DELETE -> {
@@ -141,7 +147,8 @@ class CustomItem @JvmOverloads constructor(
                     CustomItemState.DEFAULT -> {
                         animateSwipeRight(false)
                     }
-                    else -> {}
+                    else -> {
+                    }
                 }
             }
         }
@@ -149,7 +156,7 @@ class CustomItem @JvmOverloads constructor(
     }
 
     fun setDeleteClickListener(listener: ((View) -> Unit)?) {
-        binding.deleteBtn.setOnClickListener (listener)
+        binding.deleteBtn.setOnClickListener(listener)
     }
 
     fun setLocationTitle(title: String) {
@@ -157,11 +164,11 @@ class CustomItem @JvmOverloads constructor(
         binding.editText.text.replace(0, binding.editText.text.length, title)
     }
 
-    fun setCurrentSprinklingLocation (isSprinklingNow: Boolean) {
+    fun setCurrentSprinklingLocation(isSprinklingNow: Boolean) {
         binding.currentSprinkleCheckBox.isChecked = isSprinklingNow
     }
 
-    fun setFutureSprinklingLocation ( isPlanedToSprinkle: Boolean) {
+    fun setFutureSprinklingLocation(isPlanedToSprinkle: Boolean) {
         binding.setSprinkleCheckBox.isChecked = isPlanedToSprinkle
     }
 

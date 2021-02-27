@@ -3,8 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/default_state"
         android:layout_width="0dp"

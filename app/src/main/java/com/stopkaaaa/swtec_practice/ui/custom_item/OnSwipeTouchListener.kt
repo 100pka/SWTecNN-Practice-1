@@ -9,7 +9,7 @@ import kotlin.math.abs
 open class OnSwipeTouchListener(context: Context, val onSwipeCallbacks: OnSwipe) : View.OnTouchListener {
 
     companion object {
-        const val SWIPE_DISCTANCE_TRESHOLD = 50
+        const val SWIPE_DISTANCE_THRESHOLD = 50
         const val SWIPE_VELOCITY_THRESHOLD = 50
     }
 
@@ -40,7 +40,7 @@ open class OnSwipeTouchListener(context: Context, val onSwipeCallbacks: OnSwipe)
 
             if ( distanceX != null && distanceY != null ) {
                 if ( (abs(distanceX) > abs(distanceY))
-                    && (abs(distanceX) > SWIPE_DISCTANCE_TRESHOLD)
+                    && (abs(distanceX) > SWIPE_DISTANCE_THRESHOLD)
                     && (abs(velocityX) > SWIPE_VELOCITY_THRESHOLD)) {
                     if (distanceX > 0) {
                         onSwipeCallbacks.onSwipeRight()

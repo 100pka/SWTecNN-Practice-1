@@ -62,31 +62,6 @@ class LocationAdapter() : RecyclerView.Adapter<LocationAdapter.LocationViewHolde
             binding.item.setLocationTitle(location.title)
             binding.item.setCurrentSprinklingLocation(location.isSprinklingNow)
             binding.item.setFutureSprinklingLocation(location.isChosenToSprinkle)
-            binding.item.setOnTouchListener(OnSwipeTouchListener(binding.root.context, object :
-                OnSwipe {
-                override fun onSwipeLeft() {
-                    when (binding.item.currentItemState) {
-                        CustomItemState.DEFAULT -> {
-                            binding.item.setState(CustomItemState.DELETE)
-                        }
-                        CustomItemState.EDIT -> {
-                            binding.item.setState(CustomItemState.DEFAULT)
-                        }
-                        else -> {}
-                    }
-                }
-                override fun onSwipeRight() {
-                    when (binding.item.currentItemState) {
-                        CustomItemState.DEFAULT -> {
-                            binding.item.setState(CustomItemState.EDIT)
-                        }
-                        CustomItemState.DELETE -> {
-                            binding.item.setState(CustomItemState.DEFAULT)
-                        }
-                        else -> {}
-                    }
-                }
-            }))
 
             binding.item.setDeleteClickListener {
                 locationsList.remove(location)
