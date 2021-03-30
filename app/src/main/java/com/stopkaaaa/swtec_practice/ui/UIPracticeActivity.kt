@@ -5,9 +5,7 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.os.Handler
 import android.os.HandlerThread
-import android.os.Looper
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import com.stopkaaaa.swtec_practice.R
@@ -16,25 +14,17 @@ import com.stopkaaaa.swtec_practice.adapters.WhetherAdapter
 import com.stopkaaaa.swtec_practice.data.Location
 import com.stopkaaaa.swtec_practice.databinding.ActivityUIPracticeBinding
 import com.stopkaaaa.swtec_practice.handler.BindResultCallback
-import com.stopkaaaa.swtec_practice.handler.MyHandlerThread
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import smart.sprinkler.app.api.RetrofitClient
+import com.stopkaaaa.swtec_practice.handler.GetDataRunnable
 import smart.sprinkler.app.api.model.CurrentWeatherForecast
 import smart.sprinkler.app.api.model.DailyForecast
-import smart.sprinkler.app.api.model.WeatherForecast
-import java.lang.Exception
-import java.util.concurrent.LinkedBlockingQueue
-import java.util.concurrent.ThreadPoolExecutor
-import java.util.concurrent.TimeUnit
 
 class UIPracticeActivity : AppCompatActivity(), BindResultCallback {
 
     private lateinit var binding: ActivityUIPracticeBinding
     private val locationAdapter = LocationAdapter()
     private val whetherAdapter = WhetherAdapter()
-    lateinit var handlerThread: MyHandlerThread
+    lateinit var handlerThread: HandlerThread
+    lateinit var backgroundHandler: Handler
 
     @SuppressLint("UseCompatLoadingForDrawables")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,10 +59,13 @@ class UIPracticeActivity : AppCompatActivity(), BindResultCallback {
 
     override fun onStart() {
         super.onStart()
-        handlerThread = MyHandlerThread("background handlerThread")
-        handlerThread.setBindResultCallback(this)
+        handlerThread = HandlerThread("background handlerThread")
         handlerThread.start()
-        handlerThread.getWeatherData()
+        val looper = handlerThread.looper
+        backgroundHandler = Handler(looper)
+        val getDataRunnable = GetDataRunnable()
+        getDataRunnable.setBindResultCallback(this)
+        backgroundHandler.post(getDataRunnable)
     }
 
     override fun onStop() {
